@@ -41,6 +41,7 @@ public class BaseMediaPlayer
 
 	public synchronized void play(int index)
 	{
+		Log.i("blaaa", "blaaa");
 		if (MODE == 0)
 		{
 			if (actualAudioTrack == null)
