@@ -7,6 +7,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.util.Log;
 
 public class BaseMediaPlayer
 {
@@ -40,7 +41,6 @@ public class BaseMediaPlayer
 
 	public synchronized void play(int index)
 	{
-
 		if (MODE == 0)
 		{
 			if (actualAudioTrack == null)
