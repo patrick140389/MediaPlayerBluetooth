@@ -13,6 +13,7 @@ public class BaseMediaPlayer
 {
 
 	private int								MODE				= 0;
+	private boolean							PREPARED			= false;
 	private Context							context;
 
 	private ArrayList<Uri>					audioUris			= new ArrayList<Uri>();
@@ -41,66 +42,153 @@ public class BaseMediaPlayer
 
 	public synchronized void play(int index)
 	{
-		if (MODE == 0)
+		if (PREPARED)
 		{
-			if (actualAudioTrack == null)
+			if (MODE == 0)
 			{
-				actualAudioTrack = audioTracks.get(index);
-				actualAudioTrack.getAudioPlayer().start();
+				if (actualAudioTrack == null)
+				{
+					Log.i("play", "audioTracks size: " + audioTracks.size());
+					actualAudioTrack = audioTracks.get(index);
+					actualAudioTrack.getAudioPlayer().seekTo(0);
+					actualAudioTrack.getAudioPlayer().start();
+				}
+				else if (!actualAudioTrack.getAudioPlayer().isPlaying())
+				{
+					actualAudioTrack = audioTracks.get(index);
+					actualAudioTrack.getAudioPlayer().seekTo(0);
+					actualAudioTrack.getAudioPlayer().start();
+				}
+				else
+				{
+					pause();
+					play(index);
+				}
 			}
-			else if (!actualAudioTrack.getAudioPlayer().isPlaying())
+			else if (MODE == 1)
 			{
-				actualAudioTrack = audioTracks.get(index);
-				actualAudioTrack.getAudioPlayer().start();
+				// Here the videoTrackPlayer
 			}
-			else
-			{
-				pause(MODE);
-				play(index);
-			}
-		}
-		else if (MODE == 1)
-		{
-			// Here the videoTrackPlayer
 		}
 	}
 
-	public synchronized void pause(int mode)
+	public synchronized void pause()
 	{
-		if (mode == 0)
+		if (PREPARED)
 		{
-			actualAudioTrack.getAudioPlayer().pause();
+			if (MODE == 0 && actualAudioTrack != null)
+			{
+				actualAudioTrack.getAudioPlayer().pause();
+			}
+			else if (MODE == 1 && actualVideoTrack != null)
+			{
+				// Here the videoTrackPlayer
+			}
 		}
-		else if (mode == 1)
-		{
-			// Here the videoTrackPlayer
-		}
-
 	}
 
-	public synchronized void stop(int mode)
+	public synchronized void stop()
 	{
-		if (mode == 0)
+		if (PREPARED)
 		{
-			actualAudioTrack.getAudioPlayer().stop();
+			if (MODE == 0)
+			{
+				actualAudioTrack.getAudioPlayer().stop();
+			}
+			else if (MODE == 1)
+			{
+				// Here the videoTrackPlayer
+			}
 		}
-		else if (mode == 1)
-		{
-			// Here the videoTrackPlayer
-		}
-
 	}
 
 	public synchronized void changeTrack(int index)
 	{
+		if (PREPARED)
+		{
+			pause();
+			play(index);
+		}
+	}
+
+	public synchronized void nextTrack()
+	{
+		identifyNewTrack(true);
+	}
+
+	public synchronized void previewsTrack()
+	{
+		identifyNewTrack(false);
+	}
+
+	private void identifyNewTrack(boolean forOrBackTrack)
+	{
 		if (MODE == 0)
 		{
-			pause(MODE);
-			play(index);
+			for (int i = 0; i < audioTracks.size(); i++)
+			{
+				if (audioTracks.get(i).equals(actualAudioTrack))
+				{
+					if (forOrBackTrack)
+					{
+						if (i < (audioTracks.size() - 1))
+						{
+							changeTrack(i++);
+						}
+						else
+						{
+							changeTrack(0);
+						}
+					}
+					else
+					{
+						if (i == 0)
+						{
+							changeTrack((audioTracks.size() - 1));
+						}
+						else
+						{
+							changeTrack(i--);
+						}
+					}
+				}
+			}
 		}
 		else if (MODE == 1)
 		{
-			// Here the videoTrackPlayer
+
+		}
+	}
+
+	public boolean isPlaying()
+	{
+		// TODO besser machen mit enum
+		if (PREPARED)
+		{
+			if (MODE == 0 && actualAudioTrack != null)
+			{
+				return actualAudioTrack.getAudioPlayer().isPlaying();
+			}
+			else if (MODE == 0 && actualAudioTrack == null)
+			{
+				return false;
+			}
+			else if (MODE == 1 && actualVideoTrack != null)
+			{
+				return true;
+			}
+			else if (MODE == 1 && actualVideoTrack == null)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+		else
+		{
+			return false;
 		}
 	}
 
@@ -113,6 +201,7 @@ public class BaseMediaPlayer
 	{
 		loadAudioPlayerList();
 		loadVideoPlayerList();
+		PREPARED = true;
 	}
 
 	public void loadAudioPlayerList()
@@ -121,9 +210,11 @@ public class BaseMediaPlayer
 
 		for (int i = 0; i < audioUris.size(); i++)
 		{
+			Log.i("loadAudioPlayerList", "i: " + i);
 			try
 			{
 				AudioTrack audioTrack = new AudioTrack(context, new MediaPlayer(), audioUris.get(i));
+				audioTracks.add(audioTrack);
 			} catch (IllegalArgumentException e)
 			{
 				// TODO Auto-generated catch block
@@ -151,11 +242,13 @@ public class BaseMediaPlayer
 
 	public void addAudioUri(Uri uri)
 	{
+		// TODO ueberpruefen ob es sich um ein audioformat handelt (mp3 etc)
 		audioUris.add(uri);
 	}
 
 	public void addVideoUri(Uri uri)
 	{
+		// TODO ueberpruefen ob es sich um ein videoformat handelt (mp4 etc)
 		videoUris.add(uri);
 	}
 
@@ -189,6 +282,11 @@ public class BaseMediaPlayer
 	public static ArrayList<VideoTrack> getVideoTrackList()
 	{
 		return videoTracks;
+	}
+
+	public boolean isPrepared()
+	{
+		return PREPARED;
 	}
 
 }

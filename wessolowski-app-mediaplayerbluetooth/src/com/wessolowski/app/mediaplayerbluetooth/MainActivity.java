@@ -1,10 +1,8 @@
 package com.wessolowski.app.mediaplayerbluetooth;
 
 import java.io.File;
-import java.io.IOException;
 
 import android.app.Activity;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,25 +10,25 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 
 import com.wessolowski.app.android.util.adapter.CoverFlowImageAdapter;
 import com.wessolowski.app.android.util.coverflow.CoverFlow;
+import com.wessolowski.app.android.util.media.BaseMediaPlayer;
 import com.wessolowski.app.mediaplayerbluetooth.config.Config;
 import com.wessolowski.wessolowski.app.mediaplayerbluetooth.R;
 
 public class MainActivity extends Activity
 {
 
-	MediaPlayer					mediaPlayer	= null;
-
+	int							index			= 0;
 	private Button				playPause;
 	private Button				titleBackward;
 	private Button				titleForward;
+	BaseMediaPlayer				baseMediaPlayer	= null;
 
-	private static final String	TAG			= MainActivity.class.getSimpleName();
+	private static final String	TAG				= MainActivity.class.getSimpleName();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -49,63 +47,25 @@ public class MainActivity extends Activity
 			setUptCoverFlow(coverFlow);
 		}
 
-		Uri uriToPlay = Uri.fromFile(new File("/storage/sdcard0/Music/would.mp3"));
-		
+		Uri wouldUri = Uri.fromFile(new File("/storage/sdcard0/Music/would.mp3"));
+		Uri previewUri = Uri.fromFile(new File("/storage/sdcard0/Music/preview.mp3"));
+		Uri hardrockUri = Uri.fromFile(new File("/storage/sdcard0/Music/Hardrock.mp3"));
+
 		playPause = (Button) findViewById(R.id.playPause);
 		titleForward = (Button) findViewById(R.id.titleForward);
 		titleBackward = (Button) findViewById(R.id.titleBackward);
-		
-		
-		mediaPlayer = new MediaPlayer();
-		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		try
-		{
-			mediaPlayer.setDataSource(this, uriToPlay);
-		} catch (IllegalArgumentException e)
-		{
-			Log.i(TAG, "IllegalArgumentException");
-			e.printStackTrace();
-		} catch (SecurityException e)
-		{
-			Log.i(TAG, "SecurityException");
-			e.printStackTrace();
-		} catch (IllegalStateException e)
-		{
-			Log.i(TAG, "IllegalStateException");
-			e.printStackTrace();
-		} catch (IOException e)
-		{
-			Log.i(TAG, "IOException");
-			e.printStackTrace();
-		}
-		try
-		{
-			mediaPlayer.prepare();
-		} catch (IllegalStateException e)
-		{
-			Log.i(TAG, "IllegalStateException");
-			e.printStackTrace();
-		} catch (IOException e)
-		{
-			Log.i(TAG, "IOException");
-			e.printStackTrace();
-		}
 
-//		playPause.setOnLongClickListener(new OnLongClickListener()
-//		{
-//
-//			@Override
-//			public boolean onLongClick(View v)
-//			{
-//				if (mediaPlayer.isPlaying())
-//				{
-//					mediaPlayer.pause();
-//					mediaPlayer.stop();
-//					return true;
-//				}
-//				return false;
-//			}
-//		});
+		baseMediaPlayer = BaseMediaPlayer.getInstance(this);
+		Log.i(TAG, "instance");
+
+		baseMediaPlayer.addAudioUri(hardrockUri);
+		baseMediaPlayer.addAudioUri(previewUri);
+		baseMediaPlayer.addAudioUri(wouldUri);
+		Log.i(TAG, "add uri");
+		baseMediaPlayer.setMode(0);
+		Log.i(TAG, "setmode");
+		baseMediaPlayer.loadMediaPlayer();
+		Log.i(TAG, "loadmediaplayer");
 
 		playPause.setOnClickListener(new OnClickListener()
 		{
@@ -113,13 +73,18 @@ public class MainActivity extends Activity
 			@Override
 			public void onClick(View v)
 			{
-				if (mediaPlayer.isPlaying())
+				if (baseMediaPlayer.isPrepared())
 				{
-					mediaPlayer.pause();
-				}
-				else
-				{
-					mediaPlayer.start();
+					if (baseMediaPlayer.isPlaying())
+					{
+						Log.i(TAG, "is Playing true: " + baseMediaPlayer.isPlaying());
+						baseMediaPlayer.pause();
+					}
+					else
+					{
+						Log.i(TAG, "is Playing false: " + baseMediaPlayer.isPlaying());
+						baseMediaPlayer.play(index);
+					}
 				}
 			}
 		});
@@ -130,7 +95,15 @@ public class MainActivity extends Activity
 			@Override
 			public void onClick(View v)
 			{
-
+				Log.i(TAG, "index vor erhoehung: " + index);
+				index++;
+				Log.i(TAG, "nach vor erhoehung: " + index);
+				if(index > (BaseMediaPlayer.getAudioTrackList().size() - 1))
+				{
+					index = 0;
+					Log.i(TAG, "index 0 " + index);
+				}
+				baseMediaPlayer.changeTrack(index);
 			}
 		});
 
@@ -140,8 +113,12 @@ public class MainActivity extends Activity
 			@Override
 			public void onClick(View v)
 			{
-				// TODO Auto-generated method stub
-
+				index--;
+				if(index < 0)
+				{
+					index = (BaseMediaPlayer.getAudioTrackList().size() - 1);
+				}
+				baseMediaPlayer.changeTrack(index);
 			}
 		});
 
@@ -170,4 +147,10 @@ public class MainActivity extends Activity
 		coverFlow.setAdapter(coverImageAdapter);
 		coverFlow.setSelection(2, true);
 	}
+
+	private void playTrack(int index)
+	{
+
+	}
+
 }
