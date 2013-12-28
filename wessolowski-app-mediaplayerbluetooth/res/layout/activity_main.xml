@@ -63,6 +63,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="#000000" />
+			
+			<Button
+				android:id="@+id/volumeUp"
+				android:layout_width="120dp"
+				android:layout_height="50dp"
+				android:layout_below="@id/baselineDivider"
+				android:layout_alignParentLeft="true"
+				android:text="Up" />
+			<Button
+				android:id="@+id/volumeDown"
+				android:layout_width="120dp"
+				android:layout_height="50dp"
+				android:layout_below="@id/baselineDivider"
+				android:layout_toRightOf="@id/volumeUp"
+				android:text="Down" />
 
             <Button
                 android:id="@+id/playPause"

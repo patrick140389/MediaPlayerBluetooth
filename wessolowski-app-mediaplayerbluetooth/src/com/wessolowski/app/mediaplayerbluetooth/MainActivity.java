@@ -26,6 +26,9 @@ public class MainActivity extends Activity
 	private Button				playPause;
 	private Button				titleBackward;
 	private Button				titleForward;
+	private Button 				volumeUp;
+	private Button 				volumeDown;
+	
 	BaseMediaPlayer				baseMediaPlayer	= null;
 
 	private static final String	TAG				= MainActivity.class.getSimpleName();
