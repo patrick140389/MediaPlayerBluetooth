@@ -25,9 +25,11 @@ public class MainActivity extends Activity
 	private Button				playPause;
 	private Button				titleBackward;
 	private Button				titleForward;
-	private Button 				volumeUp;
-	private Button 				volumeDown;
-	
+	private Button				volumeUp;
+	private Button				volumeDown;
+	private int					a;
+	private int					b;
+
 	BaseMediaPlayer				baseMediaPlayer	= null;
 
 	private static final String	TAG				= MainActivity.class.getSimpleName();
@@ -100,7 +102,7 @@ public class MainActivity extends Activity
 				Log.i(TAG, "index vor erhoehung: " + index);
 				index++;
 				Log.i(TAG, "nach vor erhoehung: " + index);
-				if(index > (BaseMediaPlayer.getAudioTrackList().size() - 1))
+				if (index > (BaseMediaPlayer.getAudioTrackList().size() - 1))
 				{
 					index = 0;
 					Log.i(TAG, "index 0 " + index);
@@ -116,7 +118,7 @@ public class MainActivity extends Activity
 			public void onClick(View v)
 			{
 				index--;
-				if(index < 0)
+				if (index < 0)
 				{
 					index = (BaseMediaPlayer.getAudioTrackList().size() - 1);
 				}
