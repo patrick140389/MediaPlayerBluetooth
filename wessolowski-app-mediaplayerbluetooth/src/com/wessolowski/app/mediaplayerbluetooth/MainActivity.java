@@ -3,7 +3,6 @@ package com.wessolowski.app.mediaplayerbluetooth;
 import java.io.File;
 
 import android.app.Activity;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +25,9 @@ public class MainActivity extends Activity
 	private Button				playPause;
 	private Button				titleBackward;
 	private Button				titleForward;
+	private Button 				volumeUp;
+	private Button 				volumeDown;
+	
 	BaseMediaPlayer				baseMediaPlayer	= null;
 
 	private static final String	TAG				= MainActivity.class.getSimpleName();
