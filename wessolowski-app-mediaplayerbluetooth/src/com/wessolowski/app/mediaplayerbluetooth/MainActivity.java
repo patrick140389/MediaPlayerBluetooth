@@ -28,6 +28,7 @@ public class MainActivity extends Activity
 	private Button				volumeUp;
 	private Button				volumeDown;
 	private int					a;
+	private int					b;
 
 	BaseMediaPlayer				baseMediaPlayer	= null;
 
