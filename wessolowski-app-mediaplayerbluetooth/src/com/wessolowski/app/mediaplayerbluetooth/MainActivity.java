@@ -3,7 +3,6 @@ package com.wessolowski.app.mediaplayerbluetooth;
 import java.io.File;
 
 import android.app.Activity;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
