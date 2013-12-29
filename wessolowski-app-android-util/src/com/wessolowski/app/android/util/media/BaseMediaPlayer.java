@@ -14,6 +14,7 @@ public class BaseMediaPlayer
 
 	private int								MODE				= 0;
 	private boolean							PREPARED			= false;
+	private float 							VOLUME 				= 0f;					
 	private Context							context;
 
 	private ArrayList<Uri>					audioUris			= new ArrayList<Uri>();
@@ -288,5 +289,32 @@ public class BaseMediaPlayer
 	{
 		return PREPARED;
 	}
-
+	
+	public synchronized float setVolumeUp()
+	{
+		VOLUME++;
+		if(MODE == 0)
+		{
+			actualAudioTrack.getAudioPlayer().setVolume(VOLUME, VOLUME);
+		}
+		return VOLUME;
+	}
+	
+	public float setVolumeDown()
+	{
+		if(VOLUME > 0)
+		{
+			VOLUME--;
+		}
+		
+		if(MODE == 0)
+		{
+			actualAudioTrack.getAudioPlayer().setVolume(VOLUME, VOLUME);
+		}
+		else
+		{
+			
+		}
+		return VOLUME;
+	}
 }

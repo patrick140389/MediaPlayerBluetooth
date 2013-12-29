@@ -17,6 +17,7 @@ import com.wessolowski.app.android.util.coverflow.CoverFlow;
 import com.wessolowski.app.android.util.media.BaseMediaPlayer;
 import com.wessolowski.app.mediaplayerbluetooth.config.Config;
 import com.wessolowski.wessolowski.app.mediaplayerbluetooth.R;
+import android.view.View.*;
 
 public class MainActivity extends Activity
 {
@@ -56,6 +57,8 @@ public class MainActivity extends Activity
 		playPause = (Button) findViewById(R.id.playPause);
 		titleForward = (Button) findViewById(R.id.titleForward);
 		titleBackward = (Button) findViewById(R.id.titleBackward);
+		volumeUp = (Button) findViewById(R.id.volumeUp);
+		volumeDown =(Button) findViewById(R.id.volumeDown);
 
 		baseMediaPlayer = BaseMediaPlayer.getInstance(this);
 		Log.i(TAG, "instance");
@@ -123,8 +126,28 @@ public class MainActivity extends Activity
 				baseMediaPlayer.changeTrack(index);
 			}
 		});
+		
+		volumeUp.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				baseMediaPlayer.setVolumeUp();
+			}
+		});
+		
+		volumeDown.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					baseMediaPlayer.setVolumeDown();
+				}
+			});
 
 	}
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -150,9 +173,6 @@ public class MainActivity extends Activity
 		coverFlow.setSelection(2, true);
 	}
 
-	private void playTrack(int index)
-	{
-
-	}
+	
 
 }
