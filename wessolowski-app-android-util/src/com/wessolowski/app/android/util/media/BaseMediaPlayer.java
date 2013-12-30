@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
@@ -14,7 +13,7 @@ public class BaseMediaPlayer
 
 	private int								MODE				= 0;
 	private boolean							PREPARED			= false;
-	private float 							VOLUME 				= 0f;					
+	private float							VOLUME				= 0f;
 	private Context							context;
 
 	private ArrayList<Uri>					audioUris			= new ArrayList<Uri>();
@@ -24,8 +23,11 @@ public class BaseMediaPlayer
 
 	private AudioTrack						actualAudioTrack	= null;
 	private VideoTrack						actualVideoTrack	= null;
+	private MediaTrack						actualMediaTrack	= null;
 
 	private static BaseMediaPlayer			baseMediaPlayer		= null;
+
+	private static final String				TAG					= BaseMediaPlayer.class.getSimpleName();
 
 	private BaseMediaPlayer(Context context)
 	{
@@ -41,34 +43,37 @@ public class BaseMediaPlayer
 		return baseMediaPlayer;
 	}
 
+	private void setActualMediaPlayers(int index)
+	{
+		if (MODE == 0)
+		{
+			actualAudioTrack = audioTracks.get(index);
+			actualMediaTrack = actualAudioTrack;
+		}
+		else if (MODE == 1)
+		{
+			actualVideoTrack = videoTracks.get(index);
+			actualMediaTrack = actualVideoTrack;
+		}
+	}
+
 	public synchronized void play(int index)
 	{
 		if (PREPARED)
 		{
-			if (MODE == 0)
+			setActualMediaPlayers(index);
+			Log.i(TAG, "actualMediaTrack.isPlaying() " + actualMediaTrack.getMediaPlayer().isPlaying());
+			if (actualMediaTrack != null && !actualMediaTrack.getMediaPlayer().isPlaying())
 			{
-				if (actualAudioTrack == null)
-				{
-					Log.i("play", "audioTracks size: " + audioTracks.size());
-					actualAudioTrack = audioTracks.get(index);
-					actualAudioTrack.getAudioPlayer().seekTo(0);
-					actualAudioTrack.getAudioPlayer().start();
-				}
-				else if (!actualAudioTrack.getAudioPlayer().isPlaying())
-				{
-					actualAudioTrack = audioTracks.get(index);
-					actualAudioTrack.getAudioPlayer().seekTo(0);
-					actualAudioTrack.getAudioPlayer().start();
-				}
-				else
-				{
-					pause();
-					play(index);
-				}
+				Log.i(TAG, "play if");
+				actualMediaTrack.getMediaPlayer().seekTo(0);
+				actualMediaTrack.getMediaPlayer().start();
 			}
-			else if (MODE == 1)
+			else
 			{
-				// Here the videoTrackPlayer
+				Log.i(TAG, "play else");
+				pause();
+				play(index);
 			}
 		}
 	}
@@ -77,13 +82,9 @@ public class BaseMediaPlayer
 	{
 		if (PREPARED)
 		{
-			if (MODE == 0 && actualAudioTrack != null)
+			if (actualMediaTrack != null)
 			{
-				actualAudioTrack.getAudioPlayer().pause();
-			}
-			else if (MODE == 1 && actualVideoTrack != null)
-			{
-				// Here the videoTrackPlayer
+				actualMediaTrack.getMediaPlayer().pause();
 			}
 		}
 	}
@@ -92,14 +93,7 @@ public class BaseMediaPlayer
 	{
 		if (PREPARED)
 		{
-			if (MODE == 0)
-			{
-				actualAudioTrack.getAudioPlayer().stop();
-			}
-			else if (MODE == 1)
-			{
-				// Here the videoTrackPlayer
-			}
+			actualMediaTrack.getMediaPlayer().stop();
 		}
 	}
 
@@ -122,42 +116,55 @@ public class BaseMediaPlayer
 		identifyNewTrack(false);
 	}
 
+	@SuppressWarnings("rawtypes")
+	private void iterateMediaLists(ArrayList list, boolean forOrBackTrack)
+	{
+		int i;
+		for (i = 0; i < list.size(); i++)
+		{
+			if (list.equals(audioTracks) && list.get(i).equals(actualAudioTrack))
+			{
+				break;
+			}
+			else if (list.equals(videoTracks) && list.get(i).equals(actualVideoTrack))
+			{
+				break;
+			}
+		}
+
+		if (forOrBackTrack)
+		{
+			if (i < (list.size() - 1))
+			{
+				changeTrack(i++);
+			}
+			else
+			{
+				changeTrack(0);
+			}
+		}
+		else
+		{
+			if (i == 0)
+			{
+				changeTrack((list.size() - 1));
+			}
+			else
+			{
+				changeTrack(i--);
+			}
+		}
+	}
+
 	private void identifyNewTrack(boolean forOrBackTrack)
 	{
 		if (MODE == 0)
 		{
-			for (int i = 0; i < audioTracks.size(); i++)
-			{
-				if (audioTracks.get(i).equals(actualAudioTrack))
-				{
-					if (forOrBackTrack)
-					{
-						if (i < (audioTracks.size() - 1))
-						{
-							changeTrack(i++);
-						}
-						else
-						{
-							changeTrack(0);
-						}
-					}
-					else
-					{
-						if (i == 0)
-						{
-							changeTrack((audioTracks.size() - 1));
-						}
-						else
-						{
-							changeTrack(i--);
-						}
-					}
-				}
-			}
+			iterateMediaLists(audioTracks, forOrBackTrack);
 		}
 		else if (MODE == 1)
 		{
-
+			iterateMediaLists(videoTracks, forOrBackTrack);
 		}
 	}
 
@@ -166,31 +173,9 @@ public class BaseMediaPlayer
 		// TODO besser machen mit enum
 		if (PREPARED)
 		{
-			if (MODE == 0 && actualAudioTrack != null)
-			{
-				return actualAudioTrack.getAudioPlayer().isPlaying();
-			}
-			else if (MODE == 0 && actualAudioTrack == null)
-			{
-				return false;
-			}
-			else if (MODE == 1 && actualVideoTrack != null)
-			{
-				return true;
-			}
-			else if (MODE == 1 && actualVideoTrack == null)
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
+			return actualMediaTrack.getMediaPlayer().isPlaying();
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 
 	public synchronized void setMode(int mode)
@@ -203,6 +188,7 @@ public class BaseMediaPlayer
 		loadAudioPlayerList();
 		loadVideoPlayerList();
 		PREPARED = true;
+		setActualMediaPlayers(0);
 	}
 
 	public void loadAudioPlayerList()
@@ -215,6 +201,7 @@ public class BaseMediaPlayer
 			try
 			{
 				AudioTrack audioTrack = new AudioTrack(context, new MediaPlayer(), audioUris.get(i));
+				audioTrack.preparePlayer();
 				audioTracks.add(audioTrack);
 			} catch (IllegalArgumentException e)
 			{
@@ -289,32 +276,21 @@ public class BaseMediaPlayer
 	{
 		return PREPARED;
 	}
-	
+
 	public synchronized float setVolumeUp()
 	{
-		VOLUME++;
-		if(MODE == 0)
-		{
-			actualAudioTrack.getAudioPlayer().setVolume(VOLUME, VOLUME);
-		}
+		VOLUME += 0.1f;
+		actualMediaTrack.getMediaPlayer().setVolume(VOLUME, VOLUME);
 		return VOLUME;
 	}
-	
+
 	public float setVolumeDown()
 	{
-		if(VOLUME > 0)
+		if (VOLUME > 0)
 		{
-			VOLUME--;
+			VOLUME -= 0.1f;
 		}
-		
-		if(MODE == 0)
-		{
-			actualAudioTrack.getAudioPlayer().setVolume(VOLUME, VOLUME);
-		}
-		else
-		{
-			
-		}
+		actualMediaTrack.getMediaPlayer().setVolume(VOLUME, VOLUME);
 		return VOLUME;
 	}
 }

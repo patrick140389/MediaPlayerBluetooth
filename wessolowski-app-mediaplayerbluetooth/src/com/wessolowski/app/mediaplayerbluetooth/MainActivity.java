@@ -17,7 +17,6 @@ import com.wessolowski.app.android.util.coverflow.CoverFlow;
 import com.wessolowski.app.android.util.media.BaseMediaPlayer;
 import com.wessolowski.app.mediaplayerbluetooth.config.Config;
 import com.wessolowski.wessolowski.app.mediaplayerbluetooth.R;
-import android.view.View.*;
 
 public class MainActivity extends Activity
 {
@@ -58,19 +57,15 @@ public class MainActivity extends Activity
 		titleForward = (Button) findViewById(R.id.titleForward);
 		titleBackward = (Button) findViewById(R.id.titleBackward);
 		volumeUp = (Button) findViewById(R.id.volumeUp);
-		volumeDown =(Button) findViewById(R.id.volumeDown);
+		volumeDown = (Button) findViewById(R.id.volumeDown);
 
 		baseMediaPlayer = BaseMediaPlayer.getInstance(this);
-		Log.i(TAG, "instance");
 
 		baseMediaPlayer.addAudioUri(hardrockUri);
 		baseMediaPlayer.addAudioUri(previewUri);
 		baseMediaPlayer.addAudioUri(wouldUri);
-		Log.i(TAG, "add uri");
 		baseMediaPlayer.setMode(0);
-		Log.i(TAG, "setmode");
 		baseMediaPlayer.loadMediaPlayer();
-		Log.i(TAG, "loadmediaplayer");
 
 		playPause.setOnClickListener(new OnClickListener()
 		{
@@ -78,18 +73,15 @@ public class MainActivity extends Activity
 			@Override
 			public void onClick(View v)
 			{
-				if (baseMediaPlayer.isPrepared())
+				if (baseMediaPlayer.isPlaying())
 				{
-					if (baseMediaPlayer.isPlaying())
-					{
-						Log.i(TAG, "is Playing true: " + baseMediaPlayer.isPlaying());
-						baseMediaPlayer.pause();
-					}
-					else
-					{
-						Log.i(TAG, "is Playing false: " + baseMediaPlayer.isPlaying());
-						baseMediaPlayer.play(index);
-					}
+					Log.i(TAG, "is Playing true: " + baseMediaPlayer.isPlaying());
+					baseMediaPlayer.pause();
+				}
+				else
+				{
+					Log.i(TAG, "is Playing false: " + baseMediaPlayer.isPlaying());
+					baseMediaPlayer.play(index);
 				}
 			}
 		});
@@ -126,7 +118,7 @@ public class MainActivity extends Activity
 				baseMediaPlayer.changeTrack(index);
 			}
 		});
-		
+
 		volumeUp.setOnClickListener(new OnClickListener()
 		{
 			@Override
@@ -135,19 +127,17 @@ public class MainActivity extends Activity
 				baseMediaPlayer.setVolumeUp();
 			}
 		});
-		
+
 		volumeDown.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					baseMediaPlayer.setVolumeDown();
-				}
-			});
+				baseMediaPlayer.setVolumeDown();
+			}
+		});
 
 	}
-	
-	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -172,7 +162,5 @@ public class MainActivity extends Activity
 		coverFlow.setAdapter(coverImageAdapter);
 		coverFlow.setSelection(2, true);
 	}
-
-	
 
 }
