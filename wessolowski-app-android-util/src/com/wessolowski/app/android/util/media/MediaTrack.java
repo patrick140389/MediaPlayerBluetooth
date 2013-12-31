@@ -45,7 +45,12 @@ abstract class MediaTrack
 
 	protected String getTrackName()
 	{
-		return trackName;
+		return trackUri.toString();
+	}
+	
+	protected Uri getTrackUri()
+	{
+		return trackUri;
 	}
 
 	protected void setTrackName(String trackName)

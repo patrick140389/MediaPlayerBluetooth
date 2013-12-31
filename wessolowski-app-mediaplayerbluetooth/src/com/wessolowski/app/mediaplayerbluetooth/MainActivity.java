@@ -61,9 +61,9 @@ public class MainActivity extends Activity
 
 		baseMediaPlayer = BaseMediaPlayer.getInstance(this);
 
-		baseMediaPlayer.addAudioUri(hardrockUri);
-		baseMediaPlayer.addAudioUri(previewUri);
-		baseMediaPlayer.addAudioUri(wouldUri);
+//		baseMediaPlayer.addAudioUri(hardrockUri);
+//		baseMediaPlayer.addAudioUri(previewUri);
+//		baseMediaPlayer.addAudioUri(wouldUri);
 		baseMediaPlayer.setMode(0);
 		baseMediaPlayer.loadMediaPlayer();
 

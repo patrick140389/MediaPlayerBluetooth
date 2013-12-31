@@ -12,6 +12,7 @@ public class AudioTrack extends MediaTrack
 	public AudioTrack(Context context, MediaPlayer mediaPlayer, Uri uri) throws IllegalArgumentException, SecurityException, IllegalStateException, IOException
 	{
 		super(context, mediaPlayer, uri);
+		
 	}
 
 }
