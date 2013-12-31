@@ -7,6 +7,11 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
+import com.wessolowski.app.util.checks.*;
+import java.io.*;
+import com.wessolowski.app.util.ressources.*;
+import com.wessolowski.app.util.*;
+import com.wessolowski.app.util.Coverters.*;
 
 public class BaseMediaPlayer
 {
@@ -43,58 +48,52 @@ public class BaseMediaPlayer
 		return baseMediaPlayer;
 	}
 
-	private void setActualMediaPlayers(int index)
+	private boolean setActualMediaPlayers(int index)
 	{
-		if (MODE == 0)
+		if (MODE == 0 && audioTracks.size() != 0)
 		{
 			actualAudioTrack = audioTracks.get(index);
 			actualMediaTrack = actualAudioTrack;
+			return true;
 		}
-		else if (MODE == 1)
+		else if (MODE == 1 && videoTracks.size() != 0)
 		{
 			actualVideoTrack = videoTracks.get(index);
 			actualMediaTrack = actualVideoTrack;
+			return true;
 		}
+		return false;
 	}
 
-	public synchronized void play(int index)
+	public synchronized boolean play(int index)
 	{
-		if (PREPARED)
+		if (PREPARED && setActualMediaPlayers(index) && actualMediaTrack != null && !actualMediaTrack.getMediaPlayer().isPlaying())
 		{
-			setActualMediaPlayers(index);
-			Log.i(TAG, "actualMediaTrack.isPlaying() " + actualMediaTrack.getMediaPlayer().isPlaying());
-			if (actualMediaTrack != null && !actualMediaTrack.getMediaPlayer().isPlaying())
-			{
-				Log.i(TAG, "play if");
 				actualMediaTrack.getMediaPlayer().seekTo(0);
 				actualMediaTrack.getMediaPlayer().start();
-			}
-			else
-			{
-				Log.i(TAG, "play else");
-				pause();
-				play(index);
-			}
+				return true;
 		}
+		return false;
 	}
 
-	public synchronized void pause()
+	public synchronized boolean pause()
 	{
-		if (PREPARED)
+		if (Checks.ckeckNull(PREPARED, actualMediaTrack))
 		{
-			if (actualMediaTrack != null)
-			{
 				actualMediaTrack.getMediaPlayer().pause();
-			}
+				return true;
 		}
+		return false;
 	}
 
-	public synchronized void stop()
+	public synchronized boolean stop()
 	{
-		if (PREPARED)
+		if (Checks.ckeckNull(PREPARED, actualMediaTrack))
 		{
 			actualMediaTrack.getMediaPlayer().stop();
+			return true;
 		}
+		return false;
 	}
 
 	public synchronized void changeTrack(int index)
@@ -171,12 +170,14 @@ public class BaseMediaPlayer
 	public boolean isPlaying()
 	{
 		// TODO besser machen mit enum
-		if (PREPARED)
+		if (Checks.ckeckNull(PREPARED, actualMediaTrack))
 		{
 			return actualMediaTrack.getMediaPlayer().isPlaying();
 		}
 		return false;
 	}
+	
+	
 
 	public synchronized void setMode(int mode)
 	{
@@ -191,16 +192,15 @@ public class BaseMediaPlayer
 		setActualMediaPlayers(0);
 	}
 
-	public void loadAudioPlayerList()
+	public int loadAudioPlayerList()
 	{
 		// TODO nur 30 uris auf einmal laden!!!
-
-		for (int i = 0; i < audioUris.size(); i++)
+		int size;
+		for (size = 0; size < audioUris.size(); size++)
 		{
-			Log.i("loadAudioPlayerList", "i: " + i);
 			try
 			{
-				AudioTrack audioTrack = new AudioTrack(context, new MediaPlayer(), audioUris.get(i));
+				AudioTrack audioTrack = new AudioTrack(context, new MediaPlayer(), audioUris.get(size));
 				audioTrack.preparePlayer();
 				audioTracks.add(audioTrack);
 			} catch (IllegalArgumentException e)
@@ -221,11 +221,38 @@ public class BaseMediaPlayer
 				e.printStackTrace();
 			}
 		}
+		return size;
 	}
 
-	public void loadVideoPlayerList()
+	public int loadVideoPlayerList()
 	{
-
+		int size;
+		for (size = 0; size < videoUris.size(); size++)
+		{
+			try
+			{
+				VideoTrack videoTrack = new VideoTrack(context, new MediaPlayer(), videoUris.get(size));
+				videoTrack.preparePlayer();
+				videoTracks.add(videoTrack);
+			} catch (IllegalArgumentException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SecurityException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalStateException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return size;
 	}
 
 	public void addAudioUri(Uri uri)
@@ -254,13 +281,23 @@ public class BaseMediaPlayer
 
 	public int loadAllMusicUris()
 	{
+		File dir = new File("/storage/sdcard0/Music/");
+		
+		
+		ArrayList<Uri> loadedUris = FileLoader.loadUris(dir, Converter.toStringArray(".mp3"));
+		
+	
+		
 		return 0;
 	}
 
 	public int loadAllVideoUris()
 	{
+		
 		return 0;
 	}
+	
+	
 
 	public static ArrayList<AudioTrack> getAudioTrackList()
 	{
