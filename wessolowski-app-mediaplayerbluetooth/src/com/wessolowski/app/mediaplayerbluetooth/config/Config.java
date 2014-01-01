@@ -83,7 +83,8 @@ public class Config
 		IMAGE02("image02"),
 		IMAGE03("image03"),
 		IMAGE04("image04"),
-		IMAGE05("image05");
+		IMAGE05("image05"),
+		IMAGE06("image06");
 
 		private final String	ressource;
 
