@@ -17,7 +17,7 @@ public class BaseMediaPlayer
 {
 
 	private int						MODE				= 0;
-	private boolean					PRESSPAUSE			= false;
+	private boolean					PRESS_PAUSE			= false;
 	private boolean					PREPARED			= false;
 	private float					VOLUME				= 0f;
 	private Context					context;
@@ -96,19 +96,30 @@ public class BaseMediaPlayer
 
 	public synchronized boolean play(int index)
 	{
-
-		if (PREPARED && setActualMediaPlayers(index) && actualMediaTrack != null && !actualMediaTrack.getMediaPlayer().isPlaying())
+		if (PREPARED && actualMediaTrack != null && !actualMediaTrack.getMediaPlayer().isPlaying())
 		{
-			Log.i(TAG, "Track: " + actualMediaTrack.getTrackName());
-			actualMediaTrack.getMediaPlayer().seekTo(0);
-			actualMediaTrack.getMediaPlayer().start();
-			return true;
+			if(!PRESS_PAUSE && setActualMediaPlayers(index))
+			{
+				actualMediaTrack.getMediaPlayer().seekTo(0);
+				actualMediaTrack.getMediaPlayer().start();
+				PRESS_PAUSE = false;
+				return true;
+			}
+			else if(PRESS_PAUSE)
+			{
+				int currentPosition = actualMediaTrack.getMediaPlayer().getCurrentPosition();
+				actualMediaTrack.getMediaPlayer().seekTo(currentPosition);
+				actualMediaTrack.getMediaPlayer().start();
+				PRESS_PAUSE = false;
+				return true;
+			}
 		}
 		return false;
 	}
 
-	public synchronized boolean pause()
+	public synchronized boolean pause(boolean pausePressed)
 	{
+		PRESS_PAUSE = pausePressed;
 		if (Checks.ckeckNull(PREPARED, actualMediaTrack))
 		{
 			actualMediaTrack.getMediaPlayer().pause();
@@ -131,7 +142,7 @@ public class BaseMediaPlayer
 	{
 		if (PREPARED)
 		{
-			pause();
+			pause(!PRESS_PAUSE);
 			play(index);
 		}
 	}
