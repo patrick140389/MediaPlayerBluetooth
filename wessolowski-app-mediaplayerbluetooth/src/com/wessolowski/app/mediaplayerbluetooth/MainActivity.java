@@ -17,9 +17,11 @@ import com.wessolowski.app.android.util.coverflow.CoverFlow;
 import com.wessolowski.app.android.util.media.BaseMediaPlayer;
 import com.wessolowski.app.mediaplayerbluetooth.config.Config;
 import com.wessolowski.wessolowski.app.mediaplayerbluetooth.R;
+import android.text.*;
 
 public class MainActivity extends Activity
 {
+	private static final boolean PAUSE_PRESSED = true;
 
 	int							index			= 0;
 	private Button				playPause;
@@ -76,7 +78,7 @@ public class MainActivity extends Activity
 				if (baseMediaPlayer.isPlaying())
 				{
 					Log.i(TAG, "is Playing true: " + baseMediaPlayer.isPlaying());
-					baseMediaPlayer.pause();
+					baseMediaPlayer.pause(PAUSE_PRESSED);
 				}
 				else
 				{
