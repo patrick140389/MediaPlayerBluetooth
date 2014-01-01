@@ -73,20 +73,25 @@ containing a value of this type.
         public static final int image2=0x7f020003;
         public static final int image3=0x7f020004;
         public static final int image4=0x7f020005;
+        public static final int image5=0x7f020006;
     }
     public static final class id {
-        public static final int action_settings=0x7f08000b;
+        public static final int action_settings=0x7f08000f;
         public static final int baselineDivider=0x7f080007;
         public static final int baselineLayout=0x7f080006;
+        public static final int bassBoostDown=0x7f08000b;
+        public static final int bassBoostUp=0x7f08000a;
         public static final int coverflow=0x7f080005;
         public static final int headerLayout=0x7f080001;
         public static final int headline=0x7f080002;
-        public static final int headlineDivider=0x7f080004;
+        public static final int headlineDivider=0x7f080003;
         public static final int mainLayout=0x7f080000;
-        public static final int playPause=0x7f080008;
-        public static final int test=0x7f080003;
-        public static final int titleBackward=0x7f080009;
-        public static final int titleForward=0x7f08000a;
+        public static final int playPause=0x7f08000c;
+        public static final int title=0x7f080004;
+        public static final int titleBackward=0x7f08000d;
+        public static final int titleForward=0x7f08000e;
+        public static final int volumeDown=0x7f080009;
+        public static final int volumeUp=0x7f080008;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -140,31 +145,9 @@ containing a value of this type.
         res/values-v11/styles.xml on API 14+ devices.
     
  API 14 theme customizations can go here. 
-
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    
-
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        
-
-        Base application theme for API 11+. This theme completely replaces
-        AppBaseTheme from res/values/styles.xml on API 11+ devices.
-    
- API 11 theme customizations can go here. 
-
-        Base application theme for API 14+. This theme completely replaces
-        AppBaseTheme from BOTH res/values/styles.xml and
-        res/values-v11/styles.xml on API 14+ devices.
-    
- API 14 theme customizations can go here. 
          */
         public static final int AppBaseTheme=0x7f050000;
         /**  Application theme. 
- All customizations that are NOT specific to a particular API-level can go here. 
- Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
