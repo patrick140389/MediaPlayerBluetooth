@@ -2,6 +2,7 @@ package com.wessolowski.app.android.util.media;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -16,22 +17,32 @@ import com.wessolowski.app.util.ressources.FileLoader;
 public class BaseMediaPlayer
 {
 
-	private int						MODE				= 0;
-	private boolean					PRESS_PAUSE			= false;
-	private boolean					PREPARED			= false;
-	private float					VOLUME				= 0f;
+	public static final int			AUDIO_MODE				= 0;
+	public static final int			VIDEO_MODE				= 1;
+	private static float			CURRENT_VOLUME			= 0.0f;
+	private static final float		MAX_VOLUME				= 1.0f;
+	private static final float		MIN_VOLUME				= 0.0f;
+	public static final boolean		NEXT_TRACK				= true;
+	public static final boolean		PREVIOUS_TRACK			= false;
+	private static final String		DEFAULT_AUDIO_DIRECTORY	= "/storage/sdcard0/Music/";
+
+	private int						MODE					= AUDIO_MODE;
+	private boolean					PRESS_PAUSE				= false;
+	private boolean					PREPARED				= false;
+
 	private Context					context;
 
-	private static ArrayList<Uri>	audioUris			= new ArrayList<Uri>();
-	private static ArrayList<Uri>	videoUris			= new ArrayList<Uri>();
+	private ArrayList<Uri>			audioUris				= new ArrayList<Uri>();
+	private ArrayList<Uri>			videoUris				= new ArrayList<Uri>();
+	private ArrayList<String>		directorySources		= new ArrayList<String>();
 
-	private AudioTrack				actualAudioTrack	= null;
-	private VideoTrack				actualVideoTrack	= null;
-	private MediaTrack				actualMediaTrack	= null;
+	private AudioTrack				actualAudioTrack		= null;
+	private VideoTrack				actualVideoTrack		= null;
+	private MediaTrack				actualMediaTrack		= null;
 
-	private static BaseMediaPlayer	baseMediaPlayer		= null;
+	private static BaseMediaPlayer	baseMediaPlayer			= null;
 
-	private static final String		TAG					= BaseMediaPlayer.class.getSimpleName();
+	private static final String		TAG						= BaseMediaPlayer.class.getSimpleName();
 
 	private BaseMediaPlayer(Context context)
 	{
@@ -47,7 +58,7 @@ public class BaseMediaPlayer
 		return baseMediaPlayer;
 	}
 
-	private boolean setActualMediaPlayers(int index)
+	private boolean setActualMediaPlayer(int index)
 	{
 		try
 		{
@@ -56,7 +67,7 @@ public class BaseMediaPlayer
 				actualMediaTrack.getMediaPlayer().stop();
 				actualMediaTrack.getMediaPlayer().release();
 			}
-			if (MODE == 0 && audioUris.size() != 0)
+			if (MODE == AUDIO_MODE && audioUris.size() != 0)
 			{
 				// audio
 				AudioTrack audioTrack = new AudioTrack(context, new MediaPlayer(), audioUris.get(index));
@@ -65,7 +76,7 @@ public class BaseMediaPlayer
 				actualMediaTrack = actualAudioTrack;
 				return true;
 			}
-			else if (MODE == 1 && videoUris.size() != 0)
+			else if (MODE == VIDEO_MODE && videoUris.size() != 0)
 			{
 				// video
 				VideoTrack videoTrack = new VideoTrack(context, new MediaPlayer(), videoUris.get(index));
@@ -96,20 +107,23 @@ public class BaseMediaPlayer
 
 	public synchronized boolean play(int index)
 	{
+		Log.i(TAG, "PRESS_PAUSE" + PRESS_PAUSE);
 		if (PREPARED && actualMediaTrack != null && !actualMediaTrack.getMediaPlayer().isPlaying())
 		{
-			if(!PRESS_PAUSE && setActualMediaPlayers(index))
+			if (!PRESS_PAUSE && setActualMediaPlayer(index))
 			{
 				actualMediaTrack.getMediaPlayer().seekTo(0);
 				actualMediaTrack.getMediaPlayer().start();
+				setVolume(CURRENT_VOLUME);
 				PRESS_PAUSE = false;
 				return true;
 			}
-			else if(PRESS_PAUSE)
+			else if (PRESS_PAUSE)
 			{
 				int currentPosition = actualMediaTrack.getMediaPlayer().getCurrentPosition();
 				actualMediaTrack.getMediaPlayer().seekTo(currentPosition);
 				actualMediaTrack.getMediaPlayer().start();
+				setVolume(CURRENT_VOLUME);
 				PRESS_PAUSE = false;
 				return true;
 			}
@@ -142,19 +156,24 @@ public class BaseMediaPlayer
 	{
 		if (PREPARED)
 		{
-			pause(!PRESS_PAUSE);
+			pause(PRESS_PAUSE);
 			play(index);
 		}
 	}
 
-	public synchronized void nextTrack()
+	public String getTrackName()
 	{
-		identifyNewTrack(true);
+		return actualMediaTrack.getTrackName();
 	}
 
-	public synchronized void previewsTrack()
+	public synchronized void nextTrack()
 	{
-		identifyNewTrack(false);
+		identifyNewTrack(NEXT_TRACK);
+	}
+
+	public synchronized void previousTrack()
+	{
+		identifyNewTrack(PREVIOUS_TRACK);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -199,11 +218,11 @@ public class BaseMediaPlayer
 
 	private void identifyNewTrack(boolean forOrBackTrack)
 	{
-		if (MODE == 0)
+		if (MODE == AUDIO_MODE)
 		{
 			iterateMediaLists(audioUris, forOrBackTrack);
 		}
-		else if (MODE == 1)
+		else if (MODE == VIDEO_MODE)
 		{
 			iterateMediaLists(videoUris, forOrBackTrack);
 		}
@@ -227,7 +246,7 @@ public class BaseMediaPlayer
 	public void loadMediaPlayer()
 	{
 		loadAllMusicAndVideoUris();
-		setActualMediaPlayers(0);
+		setActualMediaPlayer(0);
 		PREPARED = true;
 	}
 
@@ -247,7 +266,6 @@ public class BaseMediaPlayer
 	{
 		// TODO Write in wessolowski-app-util an class that will load all uri's
 		// from filesystem
-		int uriSize = 0;
 
 		int audioUriSize = loadAllMusicUris();
 		int videoUriSize = loadAllVideoUris();
@@ -257,25 +275,54 @@ public class BaseMediaPlayer
 
 	public int loadAllMusicUris()
 	{
-		File dir = new File("/storage/sdcard0/Music/");
-		ArrayList<Uri> loadedUris = FileLoader.loadUris(dir, ".mp3", ".m4a");
-		audioUris.addAll(loadedUris);
-
-		return loadedUris.size();
+		File dir = null;
+		ArrayList<Uri> loadedUris = null;
+		if (directorySources.isEmpty())
+		{
+			dir = new File(DEFAULT_AUDIO_DIRECTORY);
+			loadedUris = FileLoader.loadUris(dir, ".mp3", ".m4a");
+			audioUris.addAll(loadedUris);
+			return loadedUris.size();
+		}
+		else
+		{
+			for (int i = 0; i < directorySources.size(); i++)
+			{
+				dir = new File(DEFAULT_AUDIO_DIRECTORY);
+				loadedUris = FileLoader.loadUris(dir, ".mp3", ".m4a");
+				audioUris.addAll(loadedUris);
+			}
+		}
+		return audioUris.size();
 	}
 
 	public int loadAllVideoUris()
 	{
-
 		return 0;
 	}
 
-	public static ArrayList<Uri> getAudioTrackList()
+	public void setDirectoryDataSource(ArrayList<String> dataSources)
+	{
+		if (!dataSources.isEmpty())
+		{
+			directorySources.addAll(dataSources);
+		}
+	}
+
+	public void addDirectoryDataSource(String dataSource)
+	{
+		if (Checks.checkNull(dataSource))
+		{
+			directorySources.add(dataSource);
+		}
+	}
+
+	public ArrayList<Uri> getAudioTrackList()
 	{
 		return audioUris;
 	}
 
-	public static ArrayList<Uri> getVideoTrackList()
+	public ArrayList<Uri> getVideoTrackList()
 	{
 		return videoUris;
 	}
@@ -285,20 +332,41 @@ public class BaseMediaPlayer
 		return PREPARED;
 	}
 
+	public float getCurrentVolume()
+	{
+		return CURRENT_VOLUME;
+	}
+
+	
+
+	private void setVolume(float volume)
+	{
+		actualMediaTrack.getMediaPlayer().setVolume(volume, volume);
+	}
+
 	public synchronized float setVolumeUp()
 	{
-		VOLUME += 0.1f;
-		actualMediaTrack.getMediaPlayer().setVolume(VOLUME, VOLUME);
-		return VOLUME;
+		if (CURRENT_VOLUME < MAX_VOLUME)
+		{
+			CURRENT_VOLUME = Converter.round(CURRENT_VOLUME + 0.02f, 2).floatValue();
+			// CURRENT_VOLUME -=
+			// (float)(Math.log(MAX_VOLUME-CURRENT_VOLUME)/Math.log(MAX_VOLUME));
+			setVolume(CURRENT_VOLUME);
+		}
+		Log.i(TAG, "current volume UP: " + (CURRENT_VOLUME));
+		return CURRENT_VOLUME;
 	}
 
 	public float setVolumeDown()
 	{
-		if (VOLUME > 0)
+		if (CURRENT_VOLUME > MIN_VOLUME)
 		{
-			VOLUME -= 0.1f;
+			CURRENT_VOLUME = Converter.round(CURRENT_VOLUME - 0.02f, 2).floatValue();
+			// CURRENT_VOLUME -=
+			// (float)(Math.log(MAX_VOLUME-CURRENT_VOLUME)/Math.log(MAX_VOLUME));
+			setVolume(CURRENT_VOLUME);
 		}
-		actualMediaTrack.getMediaPlayer().setVolume(VOLUME, VOLUME);
-		return VOLUME;
+		Log.i(TAG, "current volume DOWN: " + (CURRENT_VOLUME));
+		return CURRENT_VOLUME;
 	}
 }

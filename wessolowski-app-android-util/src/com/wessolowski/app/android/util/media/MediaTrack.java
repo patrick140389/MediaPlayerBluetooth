@@ -1,5 +1,6 @@
 package com.wessolowski.app.android.util.media;
 
+import java.io.File;
 import java.io.IOException;
 
 import android.content.Context;
@@ -36,16 +37,23 @@ abstract class MediaTrack
 	{
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		mediaPlayer.setDataSource(context, trackUri);
+		trackName = identifyTrackName(trackUri);
 	}
 
 	protected void preparePlayer() throws IllegalStateException, IOException
 	{
 		mediaPlayer.prepare();
 	}
+	
+	private String identifyTrackName(Uri uri)
+	{
+		File f = new File(uri.toString());
+		return f.getName();
+	}
 
 	protected String getTrackName()
 	{
-		return trackUri.toString();
+		return trackName;
 	}
 	
 	protected Uri getTrackUri()

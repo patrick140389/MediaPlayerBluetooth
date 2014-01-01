@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.wessolowski.app.android.util.adapter.CoverFlowImageAdapter;
 import com.wessolowski.app.android.util.coverflow.CoverFlow;
@@ -21,18 +22,19 @@ import android.text.*;
 
 public class MainActivity extends Activity
 {
-	private static final boolean PAUSE_PRESSED = true;
+	private static final boolean	PAUSE_PRESSED	= true;
 
-	int							index			= 0;
-	private Button				playPause;
-	private Button				titleBackward;
-	private Button				titleForward;
-	private Button				volumeUp;
-	private Button				volumeDown;
+	int								index			= 0;
+	private Button					playPause;
+	private Button					titleBackward;
+	private Button					titleForward;
+	private Button					volumeUp;
+	private Button					volumeDown;
+	private TextView				title;
 
-	BaseMediaPlayer				baseMediaPlayer	= null;
+	BaseMediaPlayer					baseMediaPlayer	= null;
 
-	private static final String	TAG				= MainActivity.class.getSimpleName();
+	private static final String		TAG				= MainActivity.class.getSimpleName();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -51,22 +53,16 @@ public class MainActivity extends Activity
 			setUptCoverFlow(coverFlow);
 		}
 
-		Uri wouldUri = Uri.fromFile(new File("/storage/sdcard0/Music/would.mp3"));
-		Uri previewUri = Uri.fromFile(new File("/storage/sdcard0/Music/preview.mp3"));
-		Uri hardrockUri = Uri.fromFile(new File("/storage/sdcard0/Music/Hardrock.mp3"));
-
 		playPause = (Button) findViewById(R.id.playPause);
 		titleForward = (Button) findViewById(R.id.titleForward);
 		titleBackward = (Button) findViewById(R.id.titleBackward);
 		volumeUp = (Button) findViewById(R.id.volumeUp);
 		volumeDown = (Button) findViewById(R.id.volumeDown);
+		title = (TextView) findViewById(R.id.title);
 
 		baseMediaPlayer = BaseMediaPlayer.getInstance(this);
 
-//		baseMediaPlayer.addAudioUri(hardrockUri);
-//		baseMediaPlayer.addAudioUri(previewUri);
-//		baseMediaPlayer.addAudioUri(wouldUri);
-		baseMediaPlayer.setMode(0);
+		baseMediaPlayer.setMode(BaseMediaPlayer.AUDIO_MODE);
 		baseMediaPlayer.loadMediaPlayer();
 
 		playPause.setOnClickListener(new OnClickListener()
@@ -84,6 +80,7 @@ public class MainActivity extends Activity
 				{
 					Log.i(TAG, "is Playing false: " + baseMediaPlayer.isPlaying());
 					baseMediaPlayer.play(index);
+					title.setText(baseMediaPlayer.getTrackName());
 				}
 			}
 		});
@@ -97,12 +94,13 @@ public class MainActivity extends Activity
 				Log.i(TAG, "index vor erhoehung: " + index);
 				index++;
 				Log.i(TAG, "nach vor erhoehung: " + index);
-				if (index > (BaseMediaPlayer.getAudioTrackList().size() - 1))
+				if (index > (baseMediaPlayer.getAudioTrackList().size() - 1))
 				{
 					index = 0;
 					Log.i(TAG, "index 0 " + index);
 				}
 				baseMediaPlayer.changeTrack(index);
+				title.setText(baseMediaPlayer.getTrackName());
 			}
 		});
 
@@ -115,9 +113,10 @@ public class MainActivity extends Activity
 				index--;
 				if (index < 0)
 				{
-					index = (BaseMediaPlayer.getAudioTrackList().size() - 1);
+					index = (baseMediaPlayer.getAudioTrackList().size() - 1);
 				}
 				baseMediaPlayer.changeTrack(index);
+				title.setText(baseMediaPlayer.getTrackName());
 			}
 		});
 
