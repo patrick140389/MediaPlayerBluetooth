@@ -37,25 +37,18 @@ abstract class MediaTrack
 	{
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		mediaPlayer.setDataSource(context, trackUri);
-		trackName = identifyTrackName(trackUri);
 	}
 
 	protected void preparePlayer() throws IllegalStateException, IOException
 	{
 		mediaPlayer.prepare();
 	}
-	
-	private String identifyTrackName(Uri uri)
-	{
-		File f = new File(uri.toString());
-		return f.getName();
-	}
 
 	protected String getTrackName()
 	{
 		return trackName;
 	}
-	
+
 	protected Uri getTrackUri()
 	{
 		return trackUri;
