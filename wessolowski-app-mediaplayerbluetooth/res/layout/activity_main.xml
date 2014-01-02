@@ -59,11 +59,97 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true" >
+			
+			<Button
+                android:id="@+id/loudnessUp"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="L+"
+				android:layout_alignParentLeft="true"
+                android:textColor="#ffffff" />
+			<Button
+                android:id="@+id/loudnessDown"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="L-"
+				android:layout_toRightOf="@id/loudnessUp"
+                android:textColor="#ffffff" />
+			<Button
+                android:id="@+id/bandOneUp"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="b1+"
+				android:layout_toRightOf="@id/loudnessDown"
+                android:textColor="#ffffff" />	
+			<Button
+                android:id="@+id/bandOneDown"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="b1-"
+				android:layout_toRightOf="@id/bandOneUp"
+                android:textColor="#ffffff" />
+			<Button
+                android:id="@+id/bandTwoUp"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="b2+"
+				android:layout_toRightOf="@id/bandOneDown"
+                android:textColor="#ffffff" />
+			<Button
+                android:id="@+id/bandTwoDown"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="b2-"
+				android:layout_toRightOf="@id/bandTwoUp"
+                android:textColor="#ffffff" />
+			<Button
+                android:id="@+id/bandThreeUp"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="b3+"
+				android:layout_toRightOf="@id/bandTwoDown"
+                android:textColor="#ffffff" />
+			<Button
+                android:id="@+id/bandThreeDown"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="b3-"
+				android:layout_toRightOf="@id/bandThreeUp"
+                android:textColor="#ffffff" />
+			<Button
+                android:id="@+id/bandFourUp"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="b4+"
+				android:layout_toRightOf="@id/bandThreeDown"
+                android:textColor="#ffffff" />
+			<Button
+                android:id="@+id/bandFourDown"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="b4-"
+				android:layout_toRightOf="@id/bandFourUp"
+                android:textColor="#ffffff" />
+			<Button
+                android:id="@+id/bandFiveUp"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="b5+"
+				android:layout_toRightOf="@id/bandFourDown"
+                android:textColor="#ffffff" />
+			<Button
+                android:id="@+id/bandFiveDown"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:text="b5-"
+				android:layout_toRightOf="@id/bandFiveUp"
+                android:textColor="#ffffff" />
 
             <ImageView
                 android:id="@+id/baselineDivider"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
+				android:layout_below="@id/loudnessUp"
                 android:background="#ffffff" />
 
             <Button
