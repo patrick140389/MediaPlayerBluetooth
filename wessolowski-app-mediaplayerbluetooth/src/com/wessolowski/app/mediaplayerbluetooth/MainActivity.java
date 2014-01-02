@@ -28,6 +28,18 @@ public class MainActivity extends Activity
 	private Button					volumeDown;
 	private Button					bassBoostUp;
 	private Button					bassBoostDown;
+	private Button bandOneUp;
+	private Button bandOneDown;
+	private Button bandTwoUp;
+	private Button bandTwoDown;
+	private Button bandThreeUp;
+	private Button bandThreeDown;
+	private Button bandFourUp;
+	private Button bandFourDown;
+	private Button bandFiveUp;
+	private Button bandFiveDown;
+	private Button loudnessUp;
+	private Button loudnessDown;
 	private TextView				title;
 
 	BaseMediaPlayer					baseMediaPlayer	= null;
@@ -58,6 +70,18 @@ public class MainActivity extends Activity
 		volumeDown = (Button) findViewById(R.id.volumeDown);
 		bassBoostUp = (Button) findViewById(R.id.bassBoostUp);
 		bassBoostDown =(Button) findViewById(R.id.bassBoostDown);
+		loudnessUp = (Button) findViewById(R.id.loudnessUp);
+		loudnessDown = (Button) findViewById(R.id.loudnessDown);
+		bandOneUp = (Button) findViewById(R.id.bandOneUp);
+		bandOneDown = (Button) findViewById(R.id.bandOneDown);
+		bandTwoUp = (Button) findViewById(R.id.bandTwoUp);
+		bandTwoDown = (Button) findViewById(R.id.bandTwoDown);
+		bandThreeUp = (Button) findViewById(R.id.bandThreeUp);
+		bandThreeDown = (Button) findViewById(R.id.bandThreeDown);
+		bandFourUp = (Button) findViewById(R.id.bandFourUp);
+		bandFourDown = (Button) findViewById(R.id.bandFourDown);
+		bandFiveUp = (Button) findViewById(R.id.bandFiveUp);
+		bandFiveDown = (Button) findViewById(R.id.bandFiveDown);
 		title = (TextView) findViewById(R.id.title);
 
 		baseMediaPlayer = BaseMediaPlayer.getInstance(this);
@@ -157,6 +181,114 @@ public class MainActivity extends Activity
 				baseMediaPlayer.setBoostDown();
 			}
 		});
+		
+		loudnessUp.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					//baseMediaPlayer.setLoudnessLevelUp();
+				}
+			});
+			
+		loudnessDown.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					//baseMediaPlayer.setLoudnessLevelDown();
+				}
+			});
+			
+		bandOneUp.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					baseMediaPlayer.setBandUp((short) 0);
+				}
+			});
+			
+		bandOneDown.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					baseMediaPlayer.setBandDown((short) 0);
+				}
+			});
+			
+		bandTwoUp.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					baseMediaPlayer.setBandUp((short) 1);
+				}
+			});
+			
+		bandTwoDown.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					baseMediaPlayer.setBandDown((short) 1);
+				}
+			});
+			
+		bandThreeUp.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					baseMediaPlayer.setBandUp((short) 2);
+				}
+			});
+			
+		bandThreeDown.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					baseMediaPlayer.setBandDown((short) 2);
+				}
+			});
+			
+		bandFourUp.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					baseMediaPlayer.setBandUp((short) 3);
+				}
+			});
+			
+		bandFourDown.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					baseMediaPlayer.setBandDown((short) 3);
+				}
+			});
+			
+		bandFiveUp.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					baseMediaPlayer.setBandUp((short) 4);
+				}
+			});
+			
+		bandFiveDown.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					baseMediaPlayer.setBandDown((short) 4);
+				}
+			});
 
 	}
 

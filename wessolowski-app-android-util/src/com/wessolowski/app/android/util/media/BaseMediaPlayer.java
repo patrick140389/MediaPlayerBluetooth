@@ -124,6 +124,8 @@ public class BaseMediaPlayer
 			{
 				actualMediaTrack.getMediaPlayer().seekTo(0);
 				actualMediaTrack.getMediaPlayer().start();
+				mediaPlayerEqualizer.setMediaPlayer(actualMediaTrack.getMediaPlayer());
+				
 				setVolume(CURRENT_VOLUME);
 				PRESS_PAUSE = false;
 				return true;
@@ -357,7 +359,7 @@ public class BaseMediaPlayer
 		// BassBoost bassBoost = new BassBoost(0,
 		// actualMediaTrack.getMediaPlayer().getAudioSessionId());
 		// bassBoost.setEnabled(true);
-		// Log.i(TAG, "support boost: " + bassBoost.getStrengthSupported());
+		// Log.i(TAG, "support boost: " + bassBoost.getStrengtühSupported());
 		// Log.i(TAG, "vorher get strength: " + bassBoost.getRoundedStrength());
 		// boost += 100;
 		// bassBoost.setStrength((short) boost);
@@ -409,5 +411,25 @@ public class BaseMediaPlayer
 		}
 		Log.i(TAG, "current volume DOWN: " + (CURRENT_VOLUME));
 		return CURRENT_VOLUME;
+	}
+	
+	public void setBandUp(short band)
+	{
+		mediaPlayerEqualizer.setBandLevelUp(band);
+	}
+	
+	public void setBandDown(short band)
+	{
+		mediaPlayerEqualizer.setBandLevelDown(band);
+	}
+	
+	public void setLoudnessLevelUp()
+	{
+		//mediaPlayerEqualizer.setLoudnessUp();
+	}
+	
+	public void setLoudnessLevelDown()
+	{
+		//mediaPlayerEqualizer.setLoudnessDown();
 	}
 }
