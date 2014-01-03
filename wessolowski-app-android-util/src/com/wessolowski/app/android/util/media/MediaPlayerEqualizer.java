@@ -12,17 +12,18 @@ public class MediaPlayerEqualizer
 	private static final short			BASS_BOOST_RANGE		= 50;
 	private static final short			BASS_BOOST_MIN_STRENGTH	= 0;
 	private static final short			BASS_BOOST_MAX_STRENGTH	= 1000;
-	
+
 	private static MediaPlayerEqualizer	mediaPlayerEqualizer	= null;
-	
+
 	private static final String			TAG						= MediaPlayerEqualizer.class.getSimpleName();
-	short currentBoost =  500;
-	
-	private BassBoost bassBoost = null;
-	private Equalizer androidEqualizer = null;
-	//private LoudnessEnhancer loudness = null;
-	private MediaPlayer androidMediaPlayer = null;
-	
+	short								currentBoost			= 500;
+
+	private BassBoost					bassBoost				= null;
+	private Equalizer					androidEqualizer		= null;
+	private Virtualizer					virtualizer				= null;
+
+	// private LoudnessEnhancer loudness = null;
+
 	private MediaPlayerEqualizer()
 	{
 
@@ -38,86 +39,54 @@ public class MediaPlayerEqualizer
 		return mediaPlayerEqualizer;
 	}
 
-	public void setMediaPlayer(MediaPlayer mediaPlayer)
+	public void configEqualizer(int sessoinId)
 	{
-		this.androidMediaPlayer = mediaPlayer;
-		bassBoost = new BassBoost(0, androidMediaPlayer.getAudioSessionId());
-		androidEqualizer = new Equalizer(0, androidMediaPlayer.getAudioSessionId());
-		//loudness = new LoudnessEnhancer(androidMediaPlayer.getAudioSessionId());
-		androidEqualizer.setEnabled(true);
+		bassBoost = new BassBoost(0, sessoinId);
 		bassBoost.setEnabled(true);
-		//loudness.setEnabled(true);
-		currentBoost = 0;
-		getEqu();
 		
+		androidEqualizer = new Equalizer(0, sessoinId);
+		androidEqualizer.setEnabled(true);
+		
+		virtualizer = new Virtualizer(0, sessoinId);
 	}
-	
-/*	public void setLoudnessUp()
-	{
-		float targetGain = loudness.getTargetGain();
-		Log.i(TAG, "loudness gain " + targetGain);
-		if((int) targetGain < 1500)
-		{
-			loudness.setTargetGain((int) targetGain + 100);
-		}
-	}
-	
-	public void setLoudnessDown()
-	{
-		float targetGain = loudness.getTargetGain();
-		Log.i(TAG, "loudness gain " + targetGain);
-		if((int) targetGain > 0)
-		{
-			loudness.setTargetGain((int) targetGain - 100);
-		}
-	}
-	*/
-	public void getEqu()
-	{
-		Log.i(TAG, "number of bands: " + androidEqualizer.getNumberOfBands());
-	}
-	
+
 	public void setBandLevelUp(short band)
 	{
 		short[] range = androidEqualizer.getBandLevelRange();
 		Log.i("", "min range " + range[0] + "max range " + range[1]);
-		if(androidEqualizer.getBandLevel(band) < range[1])
+		if (androidEqualizer.getBandLevel(band) < range[1])
 		{
 			short level = androidEqualizer.getBandLevel(band);
-			androidEqualizer.setBandLevel(band, (short)(level + 100));
-			Log.i("", "band level up " + androidEqualizer.getBandLevel(band));
-		}
-	}
-	
-	public void setBandLevelDown(short band)
-	{
-		short[] range = androidEqualizer.getBandLevelRange();
-		Log.i("", "min range " + range[0] + "max range " + range[1]);
-		if(androidEqualizer.getBandLevel(band) > range[0])
-		{
-			short level = androidEqualizer.getBandLevel(band);
-			androidEqualizer.setBandLevel(band, (short)(level - 100));
+			androidEqualizer.setBandLevel(band, (short) (level + 100));
 			Log.i("", "band level up " + androidEqualizer.getBandLevel(band));
 		}
 	}
 
-	public short setBassBoostUp(MediaPlayer androidMediaPlayer)
+	public void setBandLevelDown(short band)
 	{
-		//BassBoost bassBoost = new BassBoost(0, androidMediaPlayer.getAudioSessionId());
-	//	bassBoost.setEnabled(true);
+		short[] range = androidEqualizer.getBandLevelRange();
+		Log.i("", "min range " + range[0] + "max range " + range[1]);
+		if (androidEqualizer.getBandLevel(band) > range[0])
+		{
+			short level = androidEqualizer.getBandLevel(band);
+			androidEqualizer.setBandLevel(band, (short) (level - 100));
+			Log.i("", "band level up " + androidEqualizer.getBandLevel(band));
+		}
+	}
+
+	public short setBassBoostUp()
+	{
 		if (currentBoost < BASS_BOOST_MAX_STRENGTH)
 		{
 			short strength = (short) ((short) bassBoost.getRoundedStrength() + BASS_BOOST_RANGE);
 			bassBoost.setStrength(strength);
 			currentBoost = bassBoost.getRoundedStrength();
 		}
-		return bassBoost.getRoundedStrength(); 
+		return bassBoost.getRoundedStrength();
 	}
 
-	public short setbassBoostDown(MediaPlayer androidMediaPlayer)
+	public short setbassBoostDown()
 	{
-	//	BassBoost bassBoost = new BassBoost(0, androidMediaPlayer.getAudioSessionId());
-	//	bassBoost.setEnabled(true);
 		if (currentBoost > BASS_BOOST_MIN_STRENGTH)
 		{
 			short strength = (short) ((short) bassBoost.getRoundedStrength() - BASS_BOOST_RANGE);
@@ -125,6 +94,42 @@ public class MediaPlayerEqualizer
 			currentBoost = bassBoost.getRoundedStrength();
 		}
 		return bassBoost.getRoundedStrength();
+	}
+	
+	public void setVirtualizerLevelUp()
+	{
+		if(virtualizer.getRoundedStrength() < 1000)
+		{
+			virtualizer.setStrength((short)(virtualizer.getRoundedStrength() + 200));
+			Log.i(TAG, "if virtual up" + virtualizer.getRoundedStrength());
+		}
+		else
+		{
+			Log.i(TAG, "else virtual up" + virtualizer.getRoundedStrength());
+		}
+	}
+	
+	public void setVirtualizerLevelDown()
+	{
+		if(virtualizer.getRoundedStrength() > 0)
+		{
+			virtualizer.setStrength((short)(virtualizer.getRoundedStrength() - 200));
+			Log.i(TAG, "if virtual down" + virtualizer.getRoundedStrength());
+		}
+		else
+		{
+			Log.i(TAG, "else virtual down" + virtualizer.getRoundedStrength());
+		}
+	}
+	
+	
+
+	public void destroyMediaEqualizer()
+	{
+		bassBoost.setEnabled(false);
+		bassBoost.release();
+		// androidEqualizer.release();
+		// androidMediaPlayer.release();
 	}
 
 }

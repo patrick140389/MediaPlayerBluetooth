@@ -28,18 +28,18 @@ public class MainActivity extends Activity
 	private Button					volumeDown;
 	private Button					bassBoostUp;
 	private Button					bassBoostDown;
-	private Button bandOneUp;
-	private Button bandOneDown;
-	private Button bandTwoUp;
-	private Button bandTwoDown;
-	private Button bandThreeUp;
-	private Button bandThreeDown;
-	private Button bandFourUp;
-	private Button bandFourDown;
-	private Button bandFiveUp;
-	private Button bandFiveDown;
-	private Button loudnessUp;
-	private Button loudnessDown;
+	private Button					bandOneUp;
+	private Button					bandOneDown;
+	private Button					bandTwoUp;
+	private Button					bandTwoDown;
+	private Button					bandThreeUp;
+	private Button					bandThreeDown;
+	private Button					bandFourUp;
+	private Button					bandFourDown;
+	private Button					bandFiveUp;
+	private Button					bandFiveDown;
+	private Button					loudnessUp;
+	private Button					loudnessDown;
 	private TextView				title;
 
 	BaseMediaPlayer					baseMediaPlayer	= null;
@@ -69,7 +69,7 @@ public class MainActivity extends Activity
 		volumeUp = (Button) findViewById(R.id.volumeUp);
 		volumeDown = (Button) findViewById(R.id.volumeDown);
 		bassBoostUp = (Button) findViewById(R.id.bassBoostUp);
-		bassBoostDown =(Button) findViewById(R.id.bassBoostDown);
+		bassBoostDown = (Button) findViewById(R.id.bassBoostDown);
 		loudnessUp = (Button) findViewById(R.id.loudnessUp);
 		loudnessDown = (Button) findViewById(R.id.loudnessDown);
 		bandOneUp = (Button) findViewById(R.id.bandOneUp);
@@ -95,17 +95,11 @@ public class MainActivity extends Activity
 			@Override
 			public void onClick(View v)
 			{
-				if (baseMediaPlayer.isPlaying())
-				{
-					Log.i(TAG, "is Playing true: " + baseMediaPlayer.isPlaying());
-					baseMediaPlayer.pause(PAUSE_PRESSED);
-				}
-				else
-				{
-					Log.i(TAG, "is Playing false: " + baseMediaPlayer.isPlaying());
-					baseMediaPlayer.play(index);
-					title.setText(baseMediaPlayer.getTrackName());
-				}
+
+				Log.i(TAG, "is Playing false: " + baseMediaPlayer.isPlaying());
+				baseMediaPlayer.play(index);
+				title.setText(baseMediaPlayer.getTrackName());
+
 			}
 		});
 
@@ -161,134 +155,136 @@ public class MainActivity extends Activity
 				baseMediaPlayer.setVolumeDown();
 			}
 		});
-		
+
 		bassBoostUp.setOnClickListener(new OnClickListener()
 		{
-			
+
 			@Override
 			public void onClick(View v)
 			{
 				baseMediaPlayer.setBoostUp();
 			}
 		});
-		
+
 		bassBoostDown.setOnClickListener(new OnClickListener()
 		{
-			
+
 			@Override
 			public void onClick(View v)
 			{
 				baseMediaPlayer.setBoostDown();
 			}
 		});
-		
+
 		loudnessUp.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					//baseMediaPlayer.setLoudnessLevelUp();
-				}
-			});
-			
+				// baseMediaPlayer.setLoudnessLevelUp();
+				baseMediaPlayer.setVirtualizerLevelUp();
+			}
+		});
+
 		loudnessDown.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					//baseMediaPlayer.setLoudnessLevelDown();
-				}
-			});
-			
+				// baseMediaPlayer.setLoudnessLevelDown();
+				baseMediaPlayer.setVirtualizerLevelDown();
+			}
+		});
+
 		bandOneUp.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					baseMediaPlayer.setBandUp((short) 0);
-				}
-			});
-			
+				baseMediaPlayer.setBandUp((short) 0);
+			}
+		});
+
 		bandOneDown.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					baseMediaPlayer.setBandDown((short) 0);
-				}
-			});
-			
+				baseMediaPlayer.setBandDown((short) 0);
+			}
+		});
+
 		bandTwoUp.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					baseMediaPlayer.setBandUp((short) 1);
-				}
-			});
-			
+				baseMediaPlayer.setBandUp((short) 1);
+			}
+		});
+
 		bandTwoDown.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					baseMediaPlayer.setBandDown((short) 1);
-				}
-			});
-			
+				baseMediaPlayer.setBandDown((short) 1);
+			}
+		});
+
 		bandThreeUp.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					baseMediaPlayer.setBandUp((short) 2);
-				}
-			});
-			
+				baseMediaPlayer.setBandUp((short) 2);
+			}
+		});
+
 		bandThreeDown.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					baseMediaPlayer.setBandDown((short) 2);
-				}
-			});
-			
+				baseMediaPlayer.setBandDown((short) 2);
+			}
+		});
+
 		bandFourUp.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					baseMediaPlayer.setBandUp((short) 3);
-				}
-			});
-			
+				baseMediaPlayer.setBandUp((short) 3);
+			}
+		});
+
 		bandFourDown.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					baseMediaPlayer.setBandDown((short) 3);
-				}
-			});
-			
+				baseMediaPlayer.setBandDown((short) 3);
+			}
+		});
+
 		bandFiveUp.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					baseMediaPlayer.setBandUp((short) 4);
-				}
-			});
-			
+				baseMediaPlayer.setBandUp((short) 4);
+			}
+		});
+
 		bandFiveDown.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
 			{
-				@Override
-				public void onClick(View v)
-				{
-					baseMediaPlayer.setBandDown((short) 4);
-				}
-			});
+				baseMediaPlayer.setBandDown((short) 4);
+			}
+		});
 
 	}
 
@@ -298,6 +294,14 @@ public class MainActivity extends Activity
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		baseMediaPlayer.destroyBaseMediaPlayer();
+		super.onDestroy();
+		Log.i(TAG, "destroyed");
 	}
 
 	private void setUptCoverFlow(final CoverFlow coverFlow)

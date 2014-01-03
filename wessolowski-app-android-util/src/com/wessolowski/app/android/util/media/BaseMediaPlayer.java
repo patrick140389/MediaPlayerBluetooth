@@ -4,13 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import mathematik.Mathematik;
 import android.content.Context;
 import android.media.MediaPlayer;
-import android.media.audiofx.BassBoost;
 import android.net.Uri;
 import android.util.Log;
 import classholder.ClassHolderOne;
@@ -43,9 +41,9 @@ public class BaseMediaPlayer
 	private ArrayList<ClassHolderOne>	videoTracks				= new ArrayList<ClassHolderOne>();
 	private ArrayList<String>			directorySources		= new ArrayList<String>();
 
-	private AudioTrack					actualAudioTrack		= null;
-	private VideoTrack					actualVideoTrack		= null;
-	private MediaTrack					actualMediaTrack		= null;
+	private BaseAudioTrack				actualAudioTrack		= null;
+	private BaseVideoTrack				actualVideoTrack		= null;
+	private BaseMediaTrack				actualMediaTrack		= null;
 
 	private static BaseMediaPlayer		baseMediaPlayer			= null;
 	private MediaPlayerEqualizer		mediaPlayerEqualizer	= null;
@@ -66,35 +64,18 @@ public class BaseMediaPlayer
 		return baseMediaPlayer;
 	}
 
-	private boolean setActualMediaPlayer(int index)
+	public void loadMediaPlayer()
 	{
+		loadAllMusicAndVideoUris();
 		try
 		{
-			if (actualMediaTrack != null)
-			{
-				actualMediaTrack.getMediaPlayer().stop();
-				actualMediaTrack.getMediaPlayer().release();
-			}
-			if (MODE == AUDIO_MODE && audioTracks.size() != 0)
-			{
-				// audio
-				AudioTrack audioTrack = new AudioTrack(context, new MediaPlayer(), audioTracks.get(index).URI);
-				audioTrack.preparePlayer();
-				actualAudioTrack = audioTrack;
-				actualMediaTrack = actualAudioTrack;
-				actualMediaTrack.setTrackName(audioTracks.get(index).NAME);
-				return true;
-			}
-			else if (MODE == VIDEO_MODE && videoTracks.size() != 0)
-			{
-				// video
-				VideoTrack videoTrack = new VideoTrack(context, new MediaPlayer(), videoTracks.get(index).URI);
-				videoTrack.preparePlayer();
-				actualVideoTrack = videoTrack;
-				actualMediaTrack = actualVideoTrack;
-				actualMediaTrack.setTrackName(videoTracks.get(index).NAME);
-				return true;
-			}
+			actualAudioTrack = new BaseAudioTrack(context, new MediaPlayer());
+			actualAudioTrack.configureMediaPlayer();
+			Log.i(TAG, "sessionID: " + actualAudioTrack.getMediaPlayer().getAudioSessionId());
+			mediaPlayerEqualizer = MediaPlayerEqualizer.getInstance();
+			mediaPlayerEqualizer.configEqualizer(actualAudioTrack.getMediaPlayer().getAudioSessionId());
+			playSong(0);
+
 		} catch (IllegalArgumentException e)
 		{
 			// TODO Auto-generated catch block
@@ -112,70 +93,96 @@ public class BaseMediaPlayer
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		PREPARED = true;
+
+	}
+
+	private void playSong(int index)
+	{
+		try
+		{
+			actualAudioTrack.getMediaPlayer().reset();
+			actualAudioTrack.setUri(audioTracks.get(index).URI);
+			actualAudioTrack.preparePlayer();
+			Log.i(TAG, "sessionID: " + actualAudioTrack.getMediaPlayer().getAudioSessionId());
+			actualAudioTrack.getMediaPlayer().start();
+			actualAudioTrack.setTrackName(audioTracks.get(index).NAME);
+
+		} catch (IllegalArgumentException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private boolean setActualMediaPlayer(int index)
+	{
 		return false;
 	}
 
 	public synchronized boolean play(int index)
 	{
-		Log.i(TAG, "PRESS_PAUSE" + PRESS_PAUSE);
-		if (PREPARED && actualMediaTrack != null && !actualMediaTrack.getMediaPlayer().isPlaying())
+		if (actualAudioTrack.getMediaPlayer().isPlaying())
 		{
-			if (!PRESS_PAUSE && setActualMediaPlayer(index))
+			if (Checks.checkNull(actualAudioTrack))
 			{
-				actualMediaTrack.getMediaPlayer().seekTo(0);
-				actualMediaTrack.getMediaPlayer().start();
-				mediaPlayerEqualizer.setMediaPlayer(actualMediaTrack.getMediaPlayer());
-				
-				setVolume(CURRENT_VOLUME);
-				PRESS_PAUSE = false;
-				return true;
+				pause();
 			}
-			else if (PRESS_PAUSE)
+		}
+		else
+		{
+			if (Checks.checkNull(actualAudioTrack))
 			{
-				int currentPosition = actualMediaTrack.getMediaPlayer().getCurrentPosition();
-				actualMediaTrack.getMediaPlayer().seekTo(currentPosition);
-				actualMediaTrack.getMediaPlayer().start();
-				setVolume(CURRENT_VOLUME);
-				PRESS_PAUSE = false;
-				return true;
+				start();
 			}
+		}
+
+		return false;
+	}
+
+	public synchronized boolean pause()
+	{
+		if (Checks.checkNull(actualAudioTrack))
+		{
+			actualAudioTrack.getMediaPlayer().pause();
 		}
 		return false;
 	}
 
-	public synchronized boolean pause(boolean pausePressed)
+	public synchronized boolean start()
 	{
-		PRESS_PAUSE = pausePressed;
-		if (Checks.ckeckNull(PREPARED, actualMediaTrack))
+		if (Checks.checkNull(actualAudioTrack))
 		{
-			actualMediaTrack.getMediaPlayer().pause();
-			return true;
+			actualAudioTrack.getMediaPlayer().start();
 		}
 		return false;
 	}
 
 	public synchronized boolean stop()
 	{
-		if (Checks.ckeckNull(PREPARED, actualMediaTrack))
-		{
-			actualMediaTrack.getMediaPlayer().stop();
-			return true;
-		}
 		return false;
 	}
 
 	public synchronized void changeTrack(int index)
 	{
-		if (PREPARED)
-		{
-			pause(PRESS_PAUSE);
-			play(index);
-		}
+		playSong(index);
 	}
 
 	public String getTrackName()
 	{
-		return actualMediaTrack.getTrackName();
+		return actualAudioTrack.getTrackName();
 	}
 
 	public synchronized void nextTrack()
@@ -242,11 +249,6 @@ public class BaseMediaPlayer
 
 	public boolean isPlaying()
 	{
-		// TODO besser machen mit enum
-		if (Checks.ckeckNull(PREPARED, actualMediaTrack))
-		{
-			return actualMediaTrack.getMediaPlayer().isPlaying();
-		}
 		return false;
 	}
 
@@ -255,25 +257,14 @@ public class BaseMediaPlayer
 		this.MODE = mode;
 	}
 
-	public void loadMediaPlayer()
-	{
-		int size = loadAllMusicAndVideoUris();
-		Log.i(TAG, "total size tracks: " + size);
-		setActualMediaPlayer(0);
-		mediaPlayerEqualizer = MediaPlayerEqualizer.getInstance();
-		PREPARED = true;
-	}
-
 	public void addAudioUri(String trackName, Uri uri)
 	{
-		// TODO ueberpruefen ob es sich um ein audioformat handelt (mp3 etc)
 		ClassHolderOne holder = new ClassHolderOne(trackName, uri);
 		audioTracks.add(holder);
 	}
 
 	public void addVideoUri(String trackName, Uri uri)
 	{
-		// TODO ueberpruefen ob es sich um ein videoformat handelt (mp4 etc)
 		ClassHolderOne holder = new ClassHolderOne(trackName, uri);
 		videoTracks.add(holder);
 	}
@@ -353,32 +344,14 @@ public class BaseMediaPlayer
 
 	public void setBoostUp()
 	{
-		short strength = mediaPlayerEqualizer.setBassBoostUp(actualMediaTrack.getMediaPlayer());
+		short strength = mediaPlayerEqualizer.setBassBoostUp();
 		Log.i(TAG, "strength UP: " + strength);
-
-		// BassBoost bassBoost = new BassBoost(0,
-		// actualMediaTrack.getMediaPlayer().getAudioSessionId());
-		// bassBoost.setEnabled(true);
-		// Log.i(TAG, "support boost: " + bassBoost.getStrengtühSupported());
-		// Log.i(TAG, "vorher get strength: " + bassBoost.getRoundedStrength());
-		// boost += 100;
-		// bassBoost.setStrength((short) boost);
-		// Log.i(TAG, "nachher get strength: " +
-		// bassBoost.getRoundedStrength());
 	}
 
 	public void setBoostDown()
 	{
-		short strength = mediaPlayerEqualizer.setbassBoostDown(actualMediaTrack.getMediaPlayer());
+		short strength = mediaPlayerEqualizer.setbassBoostDown();
 		Log.i(TAG, "strength DOWN: " + strength);
-		// BassBoost bassBoost = new BassBoost(0,
-		// actualMediaTrack.getMediaPlayer().getAudioSessionId());
-		// Log.i(TAG, "support boost: " + bassBoost.getStrengthSupported());
-		// Log.i(TAG, "vorher get strength: " + bassBoost.getRoundedStrength());
-		// boost -= 100;
-		// bassBoost.setStrength((short) boost);
-		// Log.i(TAG, "nachher get strength: " +
-		// bassBoost.getRoundedStrength());
 	}
 
 	public float getCurrentVolume()
@@ -388,7 +361,7 @@ public class BaseMediaPlayer
 
 	private void setVolume(float volume)
 	{
-		actualMediaTrack.getMediaPlayer().setVolume(volume, volume);
+		actualAudioTrack.getMediaPlayer().setVolume(volume, volume);
 	}
 
 	public synchronized float setVolumeUp()
@@ -412,24 +385,33 @@ public class BaseMediaPlayer
 		Log.i(TAG, "current volume DOWN: " + (CURRENT_VOLUME));
 		return CURRENT_VOLUME;
 	}
-	
+
 	public void setBandUp(short band)
 	{
 		mediaPlayerEqualizer.setBandLevelUp(band);
 	}
-	
+
 	public void setBandDown(short band)
 	{
 		mediaPlayerEqualizer.setBandLevelDown(band);
 	}
-	
-	public void setLoudnessLevelUp()
+
+	public void setVirtualizerLevelUp()
 	{
-		//mediaPlayerEqualizer.setLoudnessUp();
+		mediaPlayerEqualizer.setVirtualizerLevelUp();
 	}
-	
-	public void setLoudnessLevelDown()
+
+	public void setVirtualizerLevelDown()
 	{
-		//mediaPlayerEqualizer.setLoudnessDown();
+		mediaPlayerEqualizer.setVirtualizerLevelDown();
+	}
+
+//	public void setPrev()
+//	{
+//		mediaPlayerEqualizer.setPresetReverb();
+//	}
+
+	public void destroyBaseMediaPlayer()
+	{
 	}
 }
