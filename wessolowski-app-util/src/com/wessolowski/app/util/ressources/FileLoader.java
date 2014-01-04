@@ -16,9 +16,9 @@ public class FileLoader
 
 	public static ArrayList<ClassHolderOne> loadUrisWithFileName(File dir, String... searchName)
 	{
-		Log.i(TAG, "File dir: " + dir.getAbsolutePath());
+//		Log.i(TAG, "File dir: " + dir.getAbsolutePath());
 		File[] files = dir.listFiles();
-		Log.i(TAG, "Files lenght: " + files.length);
+//		Log.i(TAG, "Files lenght: " + files.length);
 		ArrayList<ClassHolderOne> loadedUris = new ArrayList<ClassHolderOne>();
 
 		if (Checks.checkNull(files))
@@ -27,8 +27,8 @@ public class FileLoader
 			{
 				if (!files[i].isDirectory())
 				{
-					Log.i(TAG, "File: " + files[i].getName());
-					Log.i(TAG, "File: " + files[i].getAbsolutePath());
+//					Log.i(TAG, "File: " + files[i].getName());
+//					Log.i(TAG, "File: " + files[i].getAbsolutePath());
 					for (int searchIndex = 0; searchIndex < searchName.length; searchIndex++)
 					{
 						if (files[i].getName().contains(searchName[searchIndex]))

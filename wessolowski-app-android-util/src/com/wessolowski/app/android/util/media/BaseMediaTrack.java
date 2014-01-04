@@ -1,12 +1,13 @@
 package com.wessolowski.app.android.util.media;
 
-import java.io.File;
 import java.io.IOException;
 
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+
+import com.wessolowski.app.util.checks.Checks;
 
 abstract class BaseMediaTrack
 {
@@ -32,12 +33,12 @@ abstract class BaseMediaTrack
 		return mediaPlayer;
 	}
 
-	protected void configureMediaPlayer() 
+	protected void configureMediaPlayer()
 	{
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 	}
-	
-	protected void setUri(Uri uri) throws IllegalArgumentException, SecurityException, IllegalStateException, IOException
+
+	protected void setDataSource(Uri uri) throws IllegalArgumentException, SecurityException, IllegalStateException, IOException
 	{
 		this.trackUri = uri;
 		mediaPlayer.setDataSource(context, trackUri);
@@ -71,5 +72,16 @@ abstract class BaseMediaTrack
 	protected void setTrackLength(int trackLength)
 	{
 		this.trackLength = trackLength;
+	}
+
+		
+	protected void destroy()
+	{
+		if (Checks.checkNull(mediaPlayer))
+		{
+			mediaPlayer.stop();
+			mediaPlayer.release();
+			mediaPlayer = null;
+		}
 	}
 }

@@ -3,6 +3,7 @@ package com.wessolowski.app.mediaplayerbluetooth;
 import java.io.IOException;
 
 import javazoom.jl.decoder.DecoderException;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -99,39 +100,8 @@ public class MainActivity extends Activity
 			public void onClick(View v)
 			{
 
-				Log.i(TAG, "is Playing false: " + baseMediaPlayer.isPlaying());
 				baseMediaPlayer.play(index);
 				title.setText(baseMediaPlayer.getTrackName());
-//				try
-//				{
-//					baseMediaPlayer.playWithAudioTrack();
-//				}
-//				catch (IllegalArgumentException e)
-//				{
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				catch (SecurityException e)
-//				{
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				catch (IllegalStateException e)
-//				{
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				catch (DecoderException e)
-//				{
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				catch (IOException e)
-//				{
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-
 			}
 		});
 
@@ -215,7 +185,7 @@ public class MainActivity extends Activity
 			{
 				// baseMediaPlayer.setLoudnessLevelUp();
 				baseMediaPlayer.setVirtualizerLevelUp();
-		}
+			}
 		});
 
 		loudnessDown.setOnClickListener(new OnClickListener()
@@ -326,6 +296,12 @@ public class MainActivity extends Activity
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
 	}
 
 	@Override
