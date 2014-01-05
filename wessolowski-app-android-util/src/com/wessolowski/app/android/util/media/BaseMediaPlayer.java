@@ -9,6 +9,7 @@ import java.util.List;
 import mathematik.Mathematik;
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
 import android.util.Log;
 import classholder.ClassHolderOne;
@@ -19,36 +20,42 @@ import com.wessolowski.app.util.ressources.FileLoader;
 
 public class BaseMediaPlayer
 {
-	public static final int				AUDIO_MODE				= 0;
-	public static final int				VIDEO_MODE				= 1;
-	public static final float			DEFAULT_VOLUME			= 0.2f;
-	private static float				CURRENT_VOLUME			= 0.02f;
-	private static final float			MAX_VOLUME				= 1.0f;
-	private static final float			MIN_VOLUME				= 0.0f;
-	private static final float			VOLUME_RANGE			= 0.02f;
-	private static final int			DECIMAL_PLACE			= 2;
-	public static final boolean			NEXT_TRACK				= true;
-	public static final boolean			PREVIOUS_TRACK			= false;
-	private static final String			DEFAULT_AUDIO_DIRECTORY	= "/storage/sdcard0/Music/";
+	public static final int					AUDIO_MODE				= 0;
+	public static final int					VIDEO_MODE				= 1;
+	public static final float				DEFAULT_VOLUME			= 0.2f;
+	private static float					CURRENT_VOLUME			= 0.02f;
+	private static final float				MAX_VOLUME				= 1.0f;
+	private static final float				MIN_VOLUME				= 0.0f;
+	private static final float				VOLUME_RANGE			= 0.02f;
+	private static final int				DECIMAL_PLACE			= 2;
+	public static final boolean				NEXT_TRACK				= true;
+	public static final boolean				PREVIOUS_TRACK			= false;
+	private static final String				DEFAULT_AUDIO_DIRECTORY	= "/storage/sdcard0/Music/";
 
-	private int							MODE					= AUDIO_MODE;
-	private boolean						FIRST_OR_RESUME_START	= true;
-	private boolean						PREPARED				= false;
+	private int								MODE					= AUDIO_MODE;
+	private boolean							FIRST_OR_RESUME_START	= true;
+	private boolean							PREPARED				= false;
 
-	private Context						context;
+	private static boolean					REPEAT_ALL				= false;
+	private static boolean					REPEAT_TO_END			= false;
 
-	private ArrayList<ClassHolderOne>	audioTracks				= new ArrayList<ClassHolderOne>();
-	private ArrayList<ClassHolderOne>	videoTracks				= new ArrayList<ClassHolderOne>();
-	private ArrayList<String>			directorySources		= new ArrayList<String>();
+	private Context							context;
 
-	private BaseAudioTrack				actualAudioTrack		= null;
-	private BaseVideoTrack				actualVideoTrack		= null;
-	private BaseMediaTrack				actualMediaTrack		= null;
+	private ArrayList<ClassHolderOne>		audioTracks				= new ArrayList<ClassHolderOne>();
+	private ArrayList<ClassHolderOne>		videoTracks				= new ArrayList<ClassHolderOne>();
+	private ArrayList<String>				directorySources		= new ArrayList<String>();
 
-	private static BaseMediaPlayer		baseMediaPlayer			= null;
-	private MediaPlayerEqualizer		mediaPlayerEqualizer	= null;
+	private BaseMediaPlayerEventListener	eventListener			= null;
 
-	private static final String			TAG						= BaseMediaPlayer.class.getSimpleName();
+	private BaseAudioTrack					actualAudioTrack		= null;
+	private BaseVideoTrack					actualVideoTrack		= null;
+	private BaseMediaTrack					actualMediaTrack		= null;
+
+	private static BaseMediaPlayer			baseMediaPlayer			= null;
+	private MediaPlayerEqualizer			mediaPlayerEqualizer	= null;
+	private static int						indexArePlaying			= 0;
+
+	private static final String				TAG						= BaseMediaPlayer.class.getSimpleName();
 
 	private BaseMediaPlayer(Context context)
 	{
@@ -68,6 +75,8 @@ public class BaseMediaPlayer
 	{
 		CURRENT_VOLUME = DEFAULT_VOLUME;
 		setVolume(DEFAULT_VOLUME);
+		setRepeatToEnd();
+		setOnCompletionListener();
 	}
 
 	private void prepare()
@@ -122,6 +131,7 @@ public class BaseMediaPlayer
 				actualAudioTrack.preparePlayer();
 				actualAudioTrack.getMediaPlayer().start();
 				actualAudioTrack.setTrackName(audioTracks.get(index).NAME);
+				indexArePlaying = index;
 			}
 
 		} catch (IllegalArgumentException e)
@@ -426,6 +436,53 @@ public class BaseMediaPlayer
 	public void setVirtualizerLevelDown()
 	{
 		mediaPlayerEqualizer.setVirtualizerLevelDown();
+	}
+	
+	public void setRepeatNo()
+	{
+		REPEAT_ALL = false;
+		REPEAT_TO_END = false;
+	}
+	
+	public void setRepeatToEnd()
+	{
+		REPEAT_ALL = false;
+		REPEAT_TO_END = true;
+	}
+
+	public void setRepeatAllTracks()
+	{
+		REPEAT_ALL = true;
+		REPEAT_TO_END = false;
+	}
+
+	public void setOnTrackPlayFinishedListener(BaseMediaPlayerEventListener listener)
+	{
+		eventListener = listener;
+	}
+
+	private void setOnCompletionListener()
+	{
+		actualAudioTrack.getMediaPlayer().setOnCompletionListener(new OnCompletionListener()
+		{
+
+			@Override
+			public void onCompletion(MediaPlayer mp)
+			{
+				if (REPEAT_TO_END)
+				{
+					nextTrack();
+				}
+				else if (REPEAT_ALL)
+				{
+					playSong(indexArePlaying);
+				}
+				if (Checks.checkNull(eventListener))
+				{
+					eventListener.onPlayTrackFinished(actualAudioTrack.getTrackName());
+				}
+			}
+		});
 	}
 
 	public void setOnResume()

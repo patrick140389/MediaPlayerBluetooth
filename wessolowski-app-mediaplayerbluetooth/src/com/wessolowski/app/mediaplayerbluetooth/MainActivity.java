@@ -17,38 +17,37 @@ import android.widget.TextView;
 import com.wessolowski.app.android.util.adapter.CoverFlowImageAdapter;
 import com.wessolowski.app.android.util.coverflow.CoverFlow;
 import com.wessolowski.app.android.util.media.BaseMediaPlayer;
+import com.wessolowski.app.android.util.media.BaseMediaPlayerEventListener;
 import com.wessolowski.app.mediaplayerbluetooth.config.Config;
 import com.wessolowski.wessolowski.app.mediaplayerbluetooth.R;
 
 public class MainActivity extends Activity
 {
-	private static final boolean	PAUSE_PRESSED	= true;
+	private int					index			= 0;
+	private Button				playPause;
+	private Button				titleBackward;
+	private Button				titleForward;
+	private Button				volumeUp;
+	private Button				volumeDown;
+	private Button				bassBoostUp;
+	private Button				bassBoostDown;
+	private Button				bandOneUp;
+	private Button				bandOneDown;
+	private Button				bandTwoUp;
+	private Button				bandTwoDown;
+	private Button				bandThreeUp;
+	private Button				bandThreeDown;
+	private Button				bandFourUp;
+	private Button				bandFourDown;
+	private Button				bandFiveUp;
+	private Button				bandFiveDown;
+	private Button				loudnessUp;
+	private Button				loudnessDown;
+	private TextView			title;
 
-	int								index			= 0;
-	private Button					playPause;
-	private Button					titleBackward;
-	private Button					titleForward;
-	private Button					volumeUp;
-	private Button					volumeDown;
-	private Button					bassBoostUp;
-	private Button					bassBoostDown;
-	private Button					bandOneUp;
-	private Button					bandOneDown;
-	private Button					bandTwoUp;
-	private Button					bandTwoDown;
-	private Button					bandThreeUp;
-	private Button					bandThreeDown;
-	private Button					bandFourUp;
-	private Button					bandFourDown;
-	private Button					bandFiveUp;
-	private Button					bandFiveDown;
-	private Button					loudnessUp;
-	private Button					loudnessDown;
-	private TextView				title;
+	BaseMediaPlayer				baseMediaPlayer	= null;
 
-	BaseMediaPlayer					baseMediaPlayer	= null;
-
-	private static final String		TAG				= MainActivity.class.getSimpleName();
+	private static final String	TAG				= MainActivity.class.getSimpleName();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -92,6 +91,18 @@ public class MainActivity extends Activity
 
 		baseMediaPlayer.setMode(BaseMediaPlayer.AUDIO_MODE);
 		baseMediaPlayer.loadMediaPlayer();
+		baseMediaPlayer.setRepeatToEnd();
+
+		baseMediaPlayer.setOnTrackPlayFinishedListener(new BaseMediaPlayerEventListener()
+		{
+
+			@Override
+			public void onPlayTrackFinished(String trackName)
+			{
+
+				title.setText(trackName);
+			}
+		});
 
 		playPause.setOnClickListener(new OnClickListener()
 		{
@@ -297,7 +308,7 @@ public class MainActivity extends Activity
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+
 	@Override
 	protected void onResume()
 	{
