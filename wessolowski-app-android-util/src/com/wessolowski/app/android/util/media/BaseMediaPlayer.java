@@ -250,7 +250,7 @@ public class BaseMediaPlayer
 		{
 			if (i < (list.size() - 1))
 			{
-				changeTrack(i++);
+				changeTrack(i + 1);
 			}
 			else
 			{
@@ -265,7 +265,7 @@ public class BaseMediaPlayer
 			}
 			else
 			{
-				changeTrack(i--);
+				changeTrack(i - 1);
 			}
 		}
 	}
