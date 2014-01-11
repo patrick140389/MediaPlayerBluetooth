@@ -1,11 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wessolowski.app.android.util"
+    package="com.wessolowski.wessolowski.app.android.util"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="19" />
+        android:minSdkVersion="14"
+        android:targetSdkVersion="18" />
 
     <application
         android:allowBackup="true"
