@@ -1,11 +1,5 @@
 K 25
 svn:wc:ra_dav:version-url
-V 44
-/svn/!svn/ver/2/trunk/bin/com/badlogic/audio
-END
-AudioDevice.class
-K 25
-svn:wc:ra_dav:version-url
-V 62
-/svn/!svn/ver/2/trunk/bin/com/badlogic/audio/AudioDevice.class
+V 45
+/svn/!svn/ver/32/trunk/src/com/badlogic/audio
 END

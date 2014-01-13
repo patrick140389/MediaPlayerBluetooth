@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/vw_logo"
     tools:context=".MainActivity" >
 
     <RelativeLayout
         android:id="@+id/mainLayout"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="fill_parent">
 
         <RelativeLayout
             android:id="@+id/headerLayout"
@@ -26,12 +23,6 @@
                 android:layout_centerHorizontal="true"
                 android:text="Media Player with Bluetooth" />
 
-            <TextView
-                android:id="@+id/test"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/headline" />
-
             <ImageView
                 android:id="@+id/headlineDivider"
                 android:layout_width="match_parent"
@@ -39,13 +30,21 @@
                 android:layout_below="@id/headline"
                 android:background="#000000" />
 
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/headlineDivider"
+                android:textSize="30sp" />
+
             <view
                 xmlns:coverflow="http://schemas.android.com/apk/res/com.wessolowski.app.mediaplayerbluetooth"
                 android:id="@+id/coverflow"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dip"
                 android:layout_below="@id/headlineDivider"
+                android:layout_marginTop="5dip"
                 class="com.wessolowski.app.android.util.coverflow.CoverFlow"
                 imageHeiht="150dip"
                 imageWidth="100dip" >
@@ -58,16 +57,133 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true" >
 
+            <Button
+                android:id="@+id/virtualizerUp"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:text="Virt +" />
+
+            <Button
+                android:id="@+id/virtualizerDown"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toRightOf="@id/virtualizerUp"
+                android:text="Virt -" />
+
+            <Button
+                android:id="@+id/bandOneUp"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toRightOf="@id/virtualizerDown"
+                android:text="B1 +" />
+
+            <Button
+                android:id="@+id/bandOneDown"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toRightOf="@id/bandOneUp"
+                android:text="B1 -" />
+
+            <Button
+                android:id="@+id/bandTwoUp"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toRightOf="@id/bandOneDown"
+                android:text="B2 +" />
+
+            <Button
+                android:id="@+id/bandTwoDown"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toRightOf="@id/bandTwoUp"
+                android:text="B2 -" />
+
+            <Button
+                android:id="@+id/bandThreeUp"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toRightOf="@id/bandTwoDown"
+                android:text="B3 +" />
+
+            <Button
+                android:id="@+id/bandThreeDown"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toRightOf="@id/bandThreeUp"
+                android:text="B3 -" />
+
+            <Button
+                android:id="@+id/bandFourUp"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toRightOf="@id/bandThreeDown"
+                android:text="B4 +" />
+
+            <Button
+                android:id="@+id/bandFourDown"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toRightOf="@id/bandFourUp"
+                android:text="B4 -" />
+
+            <Button
+                android:id="@+id/bandFiveUp"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toRightOf="@id/bandFourDown"
+                android:text="B5 +" />
+
+            <Button
+                android:id="@+id/bandFiveDown"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toRightOf="@id/bandFiveUp"
+                android:text="B5 -" />
+
             <ImageView
                 android:id="@+id/baselineDivider"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
+                android:layout_below="@id/bandFourDown"
                 android:background="#000000" />
 
             <Button
+                android:id="@+id/volumeUp"
+                android:layout_width="100dp"
+                android:layout_height="70dp"
+				android:layout_below="@id/baselineDivider"
+				android:layout_alignParentLeft="true"                
+                android:text="VOL +" />
+
+            <Button
+                android:id="@+id/volumeDown"
+                android:layout_width="100dp"
+                android:layout_height="70dp"
+                android:layout_toRightOf="@id/volumeUp"
+                android:layout_below="@id/baselineDivider"
+                android:text="VOL -" />
+
+            <Button
+                android:id="@+id/bassBosstUp"
+                android:layout_width="100dp"
+                android:layout_height="70dp"
+                android:layout_toRightOf="@id/volumeDown"
+                android:layout_below="@id/baselineDivider"
+                android:text="Boost +" />
+
+            <Button
+                android:id="@+id/bassBoostDown"
+                android:layout_width="100dp"
+                android:layout_height="70dp"
+                android:layout_toRightOf="@id/bassBosstUp"
+                android:layout_below="@id/baselineDivider"
+                android:text="Boost -" />
+
+            <Button
                 android:id="@+id/playPause"
-                android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_width="100dp"
+                android:layout_height="70dp"
                 android:layout_below="@id/baselineDivider"
                 android:layout_centerHorizontal="true"
                 android:text="Play" />
@@ -75,7 +191,7 @@
             <Button
                 android:id="@+id/titleBackward"
                 android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_height="70dp"
                 android:layout_below="@id/baselineDivider"
                 android:layout_toLeftOf="@id/playPause"
                 android:text="Backward" />
@@ -83,7 +199,7 @@
             <Button
                 android:id="@+id/titleForward"
                 android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_height="70dp"
                 android:layout_below="@id/baselineDivider"
                 android:layout_toRightOf="@id/playPause"
                 android:text="Forward" />

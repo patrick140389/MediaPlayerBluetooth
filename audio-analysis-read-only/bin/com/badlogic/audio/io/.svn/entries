@@ -2,13 +2,13 @@
 
 dir
 32
-http://audio-analysis.googlecode.com/svn/trunk/bin/com/badlogic/audio/io
+http://audio-analysis.googlecode.com/svn/trunk/src/com/badlogic/audio/io
 http://audio-analysis.googlecode.com/svn
 
 
 
-2010-02-20T01:21:46.552582Z
-2
+2010-02-21T20:36:25.503863Z
+28
 badlogicgames
 
 
@@ -26,18 +26,17 @@ badlogicgames
 
 da89c470-1dbd-11df-9135-9f0b1fc706c8
 
-EndianDataInputStream.class
+AudioDevice.java
 file
 
 
 
 
-2014-01-11T22:24:28.816951Z
-456bb4b1689408650019ba79dfede652
-2010-02-20T01:21:46.552582Z
-2
+2014-01-11T22:24:28.804951Z
+5bd4f34105e0edf23d77cef9fb716d94
+2010-02-20T01:40:04.252793Z
+5
 badlogicgames
-has-props
 
 
 
@@ -58,20 +57,20 @@ has-props
 
 
 
-1365
+
+2118
 
-PCMFormat.class
+EndianDataInputStream.java
 file
 
 
 
 
-2014-01-11T22:24:28.816951Z
-770574aa9f54b43ef982495aab4c09a7
-2010-02-20T01:21:46.552582Z
-2
+2014-01-11T22:24:28.804951Z
+18530baf2a95770ee3e1e9c1a54d14c2
+2010-02-20T01:40:04.252793Z
+5
 badlogicgames
-has-props
 
 
 
@@ -92,20 +91,20 @@ has-props
 
 
 
-1102
+
+1263
 
-WaveDecoder.class
+MP3Decoder.java
 file
 
 
 
 
-2014-01-11T22:24:28.820951Z
-3cd71eaf22ebb7585fbd2395497b1dd8
-2010-02-20T01:21:46.552582Z
-2
+2014-01-11T22:24:28.804951Z
+8ad6e0e45c77558ad4b386e35219ed3f
+2010-02-21T20:36:25.503863Z
+28
 badlogicgames
-has-props
 
 
 
@@ -126,5 +125,74 @@ has-props
 
 
 
-2967
+
+10688
+
+Decoder.java
+file
+
+
+
+
+2014-01-11T22:24:28.804951Z
+8b0658dc2fb080bc8562147098149f94
+2010-02-21T20:33:12.530806Z
+24
+badlogicgames
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+483
+
+WaveDecoder.java
+file
+
+
+
+
+2014-01-11T22:24:28.804951Z
+5e06398da1ea80b833010c2edc31144f
+2010-02-21T20:33:12.530806Z
+24
+badlogicgames
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3771
 

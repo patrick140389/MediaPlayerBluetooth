@@ -2,14 +2,14 @@
 
 dir
 32
-http://audio-analysis.googlecode.com/svn/trunk/bin/com/badlogic/audio
+http://audio-analysis.googlecode.com/svn/trunk/src/com/badlogic/audio
 http://audio-analysis.googlecode.com/svn
 
 
 
-2010-02-20T01:21:46.552582Z
-2
-badlogicgames
+2010-02-22T17:25:04.350758Z
+32
+badlogicgames@gmail.com
 
 
 
@@ -26,39 +26,14 @@ badlogicgames
 
 da89c470-1dbd-11df-9135-9f0b1fc706c8
 
-AudioDevice.class
-file
-
-
-
-
-2014-01-11T22:24:28.820951Z
-246a7e33386137abe06073c89ffb1096
-2010-02-20T01:21:46.552582Z
-2
-badlogicgames
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2148
+visualization
+dir
+
+analysis
+dir
+
+samples
+dir
 
 io
 dir
