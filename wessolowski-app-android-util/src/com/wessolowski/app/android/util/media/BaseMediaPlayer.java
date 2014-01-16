@@ -1,11 +1,16 @@
 package com.wessolowski.app.android.util.media;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
+
+import android.R;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -158,32 +163,91 @@ public class BaseMediaPlayer
 
 	public synchronized boolean play(int index)
 	{
-		if (PREPARED == false)
-		{
-			prepare();
-		}
-
-		if (actualAudioTrack.getMediaPlayer().isPlaying())
-		{
-			if (Checks.checkNull(actualAudioTrack))
-			{
-				pause();
-			}
-		} else
-		{
-			if (Checks.checkNull(actualAudioTrack))
-			{
-				if (FIRST_OR_RESUME_START)
+		
+		new Thread( new Runnable( ) 
+	      {
+	         public void run( )
+	         {        		
+	            final float frequency = 440;
+	            float increment = (float)(2*Math.PI) * frequency / 44100; // angular increment for each sample
+	            float angle = 0;
+	            
+	            
+	            try
 				{
-					playSong(index);
-					postPrepare();
-					FIRST_OR_RESUME_START = false;
-				} else
+	            	AndroidAudioDevice device = new AndroidAudioDevice();
+	            	float samples[] = new float[500000];
+	            	float samples2[] = new float[500000];
+	            	float samples3[] = new float[500000];
+	            	float samples4[] = new float[500000];
+	            	float samples5[] = new float[500000];
+	            	
+					WaveDecoder reader = new WaveDecoder( new FileInputStream("/storage/emulated/0/Music/sample.wav" ) );
+					int a = reader.readSamples( samples );
+					Log.i(TAG, "read 1 " + a);
+					int b = reader.readSamples( samples2 );
+					Log.i(TAG, "read 2 " + b);
+					int c = reader.readSamples( samples3 );
+					Log.i(TAG, "read 3 " + c);
+					int d = reader.readSamples( samples4 );
+					Log.i(TAG, "read 4 " + d);
+					int e = reader.readSamples( samples5 );
+					Log.i(TAG, "read 5 " + e);
+//					while( reader.readSamples( samples ) > 0 )
+//					{
+//					}
+					device.writeSamples( samples );
+					Log.i(TAG, "write 1");
+					device.writeSamples( samples2 );
+					Log.i(TAG, "write 2");
+					device.writeSamples( samples3 );
+					Log.i(TAG, "write 3");
+					device.writeSamples( samples4 );
+					Log.i(TAG, "write 4");
+					device.writeSamples( samples5 );
+					Log.i(TAG, "write 5");
+				} catch (FileNotFoundException e)
 				{
-					start();
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			}
-		}
+	         }
+	      } ).start();
+		
+		
+		
+		
+		
+//		if (PREPARED == false)
+//		{
+//			prepare();
+//		}
+//
+//		if (actualAudioTrack.getMediaPlayer().isPlaying())
+//		{
+//			if (Checks.checkNull(actualAudioTrack))
+//			{
+//				pause();
+//			}
+//		} else
+//		{
+//			if (Checks.checkNull(actualAudioTrack))
+//			{
+//				if (FIRST_OR_RESUME_START)
+//				{
+//					playSong(index);
+//					postPrepare();
+//					FIRST_OR_RESUME_START = false;
+//				} else
+//				{
+//					start();
+//				}
+//			}
+//		}
 
 		return false;
 	}
